@@ -94,16 +94,63 @@ select.ctrl {
 }
 
 /* ---------- Study layout ---------- */
-.study {
+/* Explore layout: the schematic is a sticky "figure" that stays visible while
+   the catalogue and the explanation scroll beside it (master-detail). */
+.explore {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  gap: 26px;
+  gap: 24px;
   align-items: start;
   margin-top: 26px;
+  grid-template-columns: 1fr;
+  grid-template-areas: "figure" "catalog" "fiche" "cmeas" "detail";
 }
-@media (max-width: 880px) {
-  .study {
-    grid-template-columns: 1fr;
+.explore > .figure {
+  grid-area: figure;
+}
+.explore > .catalog {
+  grid-area: catalog;
+}
+.explore > .fiche-sum {
+  grid-area: fiche;
+}
+.explore > .cm {
+  grid-area: cmeas;
+  margin-top: 0;
+}
+.explore > .fiche-det {
+  grid-area: detail;
+}
+
+/* medium: two columns, schematic pinned on the left, catalogue pinned too */
+@media (min-width: 760px) {
+  .explore {
+    grid-template-columns: minmax(300px, 400px) minmax(0, 1fr);
+    grid-template-areas:
+      "figure catalog"
+      "figure fiche"
+      "figure cmeas"
+      "figure detail";
+  }
+  .explore > .figure {
+    position: sticky;
+    top: max(16px, env(safe-area-inset-top, 0px));
+    align-self: start;
+  }
+}
+
+/* wide: three columns, catalogue + schematic both pinned */
+@media (min-width: 1180px) {
+  .explore {
+    grid-template-columns: 276px minmax(300px, 400px) minmax(0, 1fr);
+    grid-template-areas:
+      "catalog figure fiche"
+      "catalog figure cmeas"
+      "catalog figure detail";
+  }
+  .explore > .catalog {
+    position: sticky;
+    top: 16px;
+    align-self: start;
   }
 }
 
@@ -152,9 +199,18 @@ select.ctrl {
 svg.plan {
   display: block;
   width: 100%;
-  max-width: 500px;
+  max-width: 440px;
   height: auto;
+  aspect-ratio: 440 / 724;
   margin: 4px auto 0;
+}
+/* when the figure is pinned, size it by viewport height so it always fits */
+@media (min-width: 760px) {
+  svg.plan {
+    height: 70vh;
+    width: auto;
+    max-width: none;
+  }
 }
 .caption {
   font-family: var(--f-sans);
@@ -226,14 +282,13 @@ svg.plan {
   border-color: var(--ink-soft);
 }
 .catalog .list {
-  max-height: 560px;
   overflow-y: auto;
   margin: 0 -6px;
-  padding: 0 6px;
+  padding: 0 6px 2px;
 }
-@media (max-width: 880px) {
+@media (min-width: 760px) {
   .catalog .list {
-    max-height: none;
+    max-height: 60vh;
   }
 }
 .layer-h {
@@ -297,29 +352,27 @@ svg.plan {
 }
 
 /* ---------- Fiche ---------- */
-.fiche {
+.fiche-sum,
+.fiche-det {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
-  margin-top: 26px;
   overflow: hidden;
-  scroll-margin-top: 16px;
 }
-.fiche .head {
-  padding: 26px 28px 22px;
-  border-bottom: 1px solid var(--line-soft);
+.fiche-sum {
+  padding: 24px 26px 22px;
 }
 @media (max-width: 640px) {
-  .fiche .head {
+  .fiche-sum {
     padding: 22px 20px 18px;
   }
 }
-.fiche .kicker {
+.fiche-sum .kicker {
   font-family: var(--f-mono);
   font-size: 0.78rem;
   color: var(--attack);
 }
-.fiche h3 {
+.fiche-sum h3 {
   font-family: var(--f-serif);
   font-weight: 500;
   font-size: clamp(1.5rem, 3.2vw, 2rem);
@@ -328,7 +381,7 @@ svg.plan {
   line-height: 1.12;
   text-wrap: balance;
 }
-.fiche .n1 {
+.fiche-sum .n1 {
   font-size: 1.08rem;
   color: var(--ink-soft);
   margin: 14px 0 0;
@@ -368,7 +421,6 @@ svg.plan {
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--accent);
-  border-top: 1px solid var(--line-soft);
 }
 .deep > summary::-webkit-details-marker {
   display: none;
@@ -769,6 +821,9 @@ footer.ethic p {
   stroke-linejoin: round;
   stroke-dasharray: 5 7;
   animation: march 1s linear infinite;
+}
+.atkpath.drawing {
+  animation: none;
 }
 @keyframes march {
   to {

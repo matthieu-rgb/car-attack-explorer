@@ -6,7 +6,8 @@ import type { Attack } from "../data/types";
 const nodeLabel = new Map(vehicle.nodes.map((n) => [n.id, n.label]));
 
 export interface Fiche {
-  element: HTMLElement;
+  summary: HTMLElement;
+  detail: HTMLElement;
   update(attack: Attack): void;
 }
 
@@ -15,18 +16,14 @@ export function createFiche(
   open: boolean,
   onOpenChange: (v: boolean) => void,
 ): Fiche {
-  const element = h("article", { class: "fiche", id: "fiche", tabindex: "-1" });
+  const summary = h("article", { class: "fiche-sum", id: "fiche" });
+  const detail = h("section", { class: "fiche-det" });
 
   function textField(key: string, value: string): HTMLElement {
     return h("div", { class: "field" }, [h("h4", {}, [t(key)]), h("p", {}, [value])]);
   }
 
-  function listField(
-    key: string,
-    items: string[],
-    tag: "ul" | "ol",
-    listClass?: string,
-  ): HTMLElement {
+  function listField(key: string, items: string[], tag: "ul" | "ol", listClass?: string): HTMLElement {
     const list = h(tag, listClass ? { class: listClass } : {}, items.map((it) => h("li", {}, [it])));
     return h("div", { class: "field" }, [h("h4", {}, [t(key)]), list]);
   }
@@ -51,11 +48,17 @@ export function createFiche(
       chips.push(h("span", { class: "chip target" }, [`${t("fiche.chip.target")} : ${label}`]));
     }
     if (a.blockedBy.length > 0) {
-      const names = a.blockedBy.map((c) => t(`cm.${c}.lab`)).join(", ");
-      chips.push(h("span", { class: "chip remedy" }, [names]));
+      chips.push(h("span", { class: "chip remedy" }, [a.blockedBy.map((c) => t(`cm.${c}.lab`)).join(", ")]));
     } else {
       chips.push(h("span", { class: "chip" }, [t("fiche.chip.remedyNone")]));
     }
+
+    summary.replaceChildren(
+      h("div", { class: "kicker" }, [`${a.id} — ${t("fiche.kicker")} ${a.layer}`]),
+      h("h3", {}, [a.nom]),
+      h("p", { class: "n1" }, [a.resume]),
+      h("div", { class: "meta" }, chips),
+    );
 
     const body: HTMLElement[] = [
       textField("fiche.f.principe", a.principe),
@@ -87,18 +90,9 @@ export function createFiche(
       open = details.hasAttribute("open");
       onOpenChange(open);
     });
-
-    element.replaceChildren(
-      h("div", { class: "head" }, [
-        h("div", { class: "kicker" }, [`${a.id} — ${t("fiche.kicker")} ${a.layer}`]),
-        h("h3", {}, [a.nom]),
-        h("p", { class: "n1" }, [a.resume]),
-        h("div", { class: "meta" }, chips),
-      ]),
-      details,
-    );
+    detail.replaceChildren(details);
   }
 
   build(initial);
-  return { element, update: build };
+  return { summary, detail, update: build };
 }

@@ -202,16 +202,64 @@ export function createVehiclePlan(reduceMotion: boolean): VehiclePlan {
     return points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x} ${p.y}`).join(" ");
   }
 
-  // Draw the attack path and, unless reduced motion, a packet travelling along it.
+  function lerp(a: Pt, b: Pt, t: number): Pt {
+    return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+  }
+
+  // Draw the attack path (tracing in on appearance) and a travelling packet.
   function drawPath(points: Pt[]): void {
     if (points.length < 2) return;
-    pathLayer.append(el("path", { class: "atkpath", id: "atk-live", d: pathD(points) }));
+    const p = el("path", { class: "atkpath", id: "atk-live", d: pathD(points) });
+    pathLayer.append(p);
     if (reduceMotion) return;
+    // one-shot "draw-in" from entry to target, then hand over to the CSS march
+    try {
+      const len = (p as SVGPathElement).getTotalLength();
+      p.classList.add("drawing");
+      p.style.strokeDasharray = String(len);
+      p.style.strokeDashoffset = String(len);
+      const anim = p.animate(
+        [{ strokeDashoffset: len }, { strokeDashoffset: 0 }],
+        { duration: 460, easing: "cubic-bezier(.22,.61,.36,1)" },
+      );
+      anim.onfinish = () => {
+        p.classList.remove("drawing");
+        p.style.strokeDasharray = "";
+        p.style.strokeDashoffset = "";
+      };
+    } catch {
+      /* getTotalLength unavailable */
+    }
     const packet = el("circle", { class: "packet", r: 3.4 });
-    const motion = el("animateMotion", { dur: "1.8s", repeatCount: "indefinite", rotate: "0", begin: "0.15s" });
+    const motion = el("animateMotion", { dur: "1.8s", repeatCount: "indefinite", rotate: "0", begin: "0.3s" });
     motion.append(el("mpath", { href: "#atk-live" }));
     packet.append(motion);
     pathLayer.append(packet);
+  }
+
+  // A drawn shield where a defence intercepts the attack.
+  function shield(pt: Pt): void {
+    const g = el("g", { transform: `translate(${pt.x} ${pt.y})` });
+    g.append(
+      el("path", {
+        d: "M0 -7.5 L6.2 -4.3 L6.2 1 C6.2 5.6 0 8.2 0 8.2 C0 8.2 -6.2 5.6 -6.2 1 L-6.2 -4.3 Z",
+        fill: "color-mix(in srgb, var(--ok) 26%, var(--bg))",
+        stroke: "var(--ok)",
+        "stroke-width": 1.4,
+        "stroke-linejoin": "round",
+      }),
+    );
+    g.append(
+      el("path", {
+        d: "M-2.6 0.2 L-0.6 2.6 L3.1 -2.4",
+        fill: "none",
+        stroke: "var(--ok)",
+        "stroke-width": 1.5,
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
+      }),
+    );
+    fxLayer.append(g);
   }
 
   function burst(p: Pt, color: string): void {
@@ -255,16 +303,27 @@ export function createVehiclePlan(reduceMotion: boolean): VehiclePlan {
     const routePts = attack.route.map(resolve);
 
     if (blockedBy) {
-      // Segmentation rejects at the gateway; other defences at the targeted
-      // interface (last point). Nothing is marked compromised, buses stay cold.
-      let cut = routePts.length;
+      // The attack is stopped at the defence point: the red path ends there and a
+      // green shield marks the interception. Nothing downstream is compromised.
+      const last = routePts.length - 1;
+      let shown: Pt[];
+      let blockPt: Pt;
       if (blockedBy === "segmentation") {
         const gi = attack.route.indexOf("gateway");
-        cut = gi >= 0 ? gi + 1 : Math.max(1, routePts.length - 1);
+        const idx = gi >= 0 ? gi : Math.max(0, last - 1);
+        shown = routePts.slice(0, idx + 1);
+        blockPt = routePts[idx] ?? gatewayPt;
+      } else if (routePts.length >= 2) {
+        // intercepted just short of the targeted interface
+        blockPt = lerp(routePts[last - 1], routePts[last], 0.72);
+        shown = routePts.slice(0, last).concat([blockPt]);
+      } else {
+        blockPt = routePts[last] ?? gatewayPt;
+        shown = routePts.slice();
       }
-      const shown = routePts.slice(0, cut);
       drawPath(shown);
-      burst(shown[shown.length - 1] ?? gatewayPt, "var(--ok)");
+      burst(blockPt, "var(--ok)");
+      shield(blockPt);
       return;
     }
 

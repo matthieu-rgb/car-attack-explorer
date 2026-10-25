@@ -78,7 +78,7 @@
   "fiche.f.casReel": "Real-world case",
 
   "cm.title": "Replay the attack with a defence on",
-  "cm.sub": "Each defence has a precise scope. Turn one on and watch what changes on the attack path, on the left.",
+  "cm.sub": "Each defence has a precise scope. Turn one on and watch what changes on the schematic.",
   "cm.secoc.lab": "SecOC",
   "cm.secoc.desc": "Authenticates every message (MAC + freshness counter)",
   "cm.segmentation.lab": "Segmentation",

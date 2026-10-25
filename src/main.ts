@@ -150,12 +150,12 @@ function render(): void {
     catalogAttacks,
     currentId,
     (id) => {
+      // Update the (pinned) schematic and the explanation in place. No scroll
+      // jump: the schematic stays visible so the change is seen immediately.
       currentId = id;
       catalog.setCurrent(id);
       fiche.update(byId(id));
       applyAttack();
-      fiche.element.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
-      fiche.element.focus({ preventScroll: true });
     },
     catalogFilter,
     (f) => {
@@ -184,9 +184,7 @@ function render(): void {
 
   const main = h("main", { id: "content" }, [
     hero,
-    h("div", { class: "study" }, [figure, catalog.element]),
-    fiche.element,
-    switches.element,
+    h("div", { class: "explore" }, [figure, catalog.element, fiche.summary, switches.element, fiche.detail]),
     footer,
   ]);
 

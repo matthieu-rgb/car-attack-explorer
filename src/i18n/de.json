@@ -78,7 +78,7 @@
   "fiche.f.casReel": "Realer Fall",
 
   "cm.title": "Angriff mit aktiver Abwehr erneut abspielen",
-  "cm.sub": "Jede Abwehr hat einen genauen Wirkungsbereich. Aktivieren Sie eine und beobachten Sie links, was sich am Angriffspfad aendert.",
+  "cm.sub": "Jede Abwehr hat einen genauen Wirkungsbereich. Aktivieren Sie eine und beobachten Sie am Schema, was sich am Angriffspfad aendert.",
   "cm.secoc.lab": "SecOC",
   "cm.secoc.desc": "Authentifiziert jede Nachricht (MAC + Frischezaehler)",
   "cm.segmentation.lab": "Segmentierung",

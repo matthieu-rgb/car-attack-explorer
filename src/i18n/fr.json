@@ -78,7 +78,7 @@
   "fiche.f.casReel": "Cas reel",
 
   "cm.title": "Rejouez l'attaque, defense activee",
-  "cm.sub": "Chaque defense a un perimetre precis. Activez-en une et observez ce qu'elle change sur le chemin d'attaque, a gauche.",
+  "cm.sub": "Chaque defense a un perimetre precis. Activez-en une et observez ce qu'elle change sur le schema.",
   "cm.secoc.lab": "SecOC",
   "cm.secoc.desc": "Authentifie chaque message (MAC + compteur de fraicheur)",
   "cm.segmentation.lab": "Segmentation",
