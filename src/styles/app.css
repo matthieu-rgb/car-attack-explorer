@@ -560,24 +560,23 @@ figure.frame .okv {
 }
 .switches {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(188px, 1fr));
   gap: 12px;
-}
-@media (max-width: 640px) {
-  .switches {
-    grid-template-columns: 1fr;
-  }
 }
 .sw {
   display: flex;
   gap: 12px;
   align-items: flex-start;
   text-align: left;
+  min-width: 0;
   background: var(--surface-2);
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 13px 14px;
   cursor: pointer;
+}
+.sw > span:last-child {
+  min-width: 0;
 }
 .sw:hover {
   border-color: var(--ink-faint);
