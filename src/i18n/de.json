@@ -9,6 +9,21 @@
 
   "skip": "Zum Inhalt springen",
 
+  "nav.label": "Bereiche",
+  "nav.explore": "Explorer",
+  "nav.canbus": "Der CAN-Bus",
+  "nav.tools": "Werkzeuge",
+
+  "canbus.cta": "Angriffe erkunden",
+
+  "tools.title": "Der Werkzeugkasten",
+  "tools.lede": "Um einen Bus mitzulesen, eine Botschaft zu bauen, einen Chip zu sondieren oder ein Funksignal zu erfassen. Die bekannten offentlichen Werkzeuge, nach Einsatzzweck geordnet, mit dem was jedes tut.",
+  "tools.note": "Referenzliste zu Lernzwecken. Keines dieser Werkzeuge wird hier ausgefuhrt.",
+  "tools.kind.logiciel": "Software",
+  "tools.kind.materiel": "Hardware",
+  "tools.kind.radio": "Funk",
+  "tools.kind.framework": "Framework",
+
   "hero.title": "Wie man",
   "hero.titleEm": "ein Auto angreift.",
   "hero.lede": "Ein modernes Fahrzeug besteht aus einem Dutzend Rechnern, die ueber denselben Draht miteinander sprechen. Waehlen Sie einen Angriff: Sie sehen, wo er eindringt, wie er sich ausbreitet und was eine Abwehr wirklich blockiert.",

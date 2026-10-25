@@ -9,6 +9,21 @@
 
   "skip": "Aller au contenu",
 
+  "nav.label": "Sections",
+  "nav.explore": "Explorateur",
+  "nav.canbus": "Le bus CAN",
+  "nav.tools": "Outils",
+
+  "canbus.cta": "Explorer les attaques",
+
+  "tools.title": "La caisse a outils",
+  "tools.lede": "De quoi lire un bus, forger une trame, sonder une puce ou capter un signal radio. Les outils publics et reconnus, classes par usage, avec ce que chacun fait.",
+  "tools.note": "Liste de reference a visee pedagogique. Aucun de ces outils n'est execute ici.",
+  "tools.kind.logiciel": "logiciel",
+  "tools.kind.materiel": "materiel",
+  "tools.kind.radio": "radio",
+  "tools.kind.framework": "framework",
+
   "hero.title": "Comment on attaque",
   "hero.titleEm": "une voiture.",
   "hero.lede": "Un vehicule moderne, c'est une dizaine d'ordinateurs qui se parlent sur un meme fil. Choisissez une attaque : on vous montre par ou elle entre, comment elle circule, et ce qu'une defense bloque vraiment.",
