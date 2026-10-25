@@ -152,7 +152,7 @@ select.ctrl {
 svg.plan {
   display: block;
   width: 100%;
-  max-width: 430px;
+  max-width: 500px;
   height: auto;
   margin: 4px auto 0;
 }
@@ -645,16 +645,71 @@ footer.ethic p {
   stroke-width: 1;
   stroke-linecap: round;
 }
+.car-detail {
+  fill: none;
+  stroke: var(--car-soft);
+  stroke-width: 1;
+}
 .tire {
   fill: var(--car-soft);
   opacity: 0.7;
 }
 .bus {
   fill: none;
-  stroke-width: 1.7;
+  stroke-width: 2.3;
   stroke-linecap: round;
   stroke-linejoin: round;
+  opacity: 0.92;
+}
+.bus.hot {
+  stroke-width: 3.2;
+  filter: drop-shadow(0 0 3px currentColor);
+  animation: sat 1.1s ease-in-out infinite;
+}
+@keyframes sat {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* domain zones (trust boundaries) */
+.zone {
+  fill: color-mix(in srgb, currentColor 8%, transparent);
+  stroke: currentColor;
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
   opacity: 0.9;
+}
+.zone-label {
+  font-family: var(--f-sans);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  fill: currentColor;
+  opacity: 0.9;
+}
+.packet {
+  fill: var(--attack);
+  filter: drop-shadow(0 0 3px var(--attack));
+}
+.entry-g.hot .mk {
+  animation: entrypulse 1.5s ease-out infinite;
+}
+@keyframes entrypulse {
+  0% {
+    filter: drop-shadow(0 0 0 var(--attack));
+  }
+  50% {
+    filter: drop-shadow(0 0 5px var(--attack));
+  }
+  100% {
+    filter: drop-shadow(0 0 0 var(--attack));
+  }
 }
 .node {
   fill: var(--surface);
@@ -739,6 +794,8 @@ footer.ethic p {
 
 body.reduce .atkpath,
 body.reduce .frame-dot,
-body.reduce .readout .live {
+body.reduce .readout .live,
+body.reduce .bus.hot,
+body.reduce .entry-g.hot .mk {
   animation: none !important;
 }

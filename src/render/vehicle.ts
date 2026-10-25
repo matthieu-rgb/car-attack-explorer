@@ -7,13 +7,21 @@ type Pt = { x: number; y: number };
 
 // Bus trunks. Drawn and reused as SMIL motion paths for ambient traffic.
 const TRUNKS: { domain: Domain; draw: string; motion: string }[] = [
-  { domain: "powertrain", draw: "M222 150 V366", motion: "M222 150 V366" },
-  { domain: "chassis", draw: "M150 205 V390 H198", motion: "M150 205 V390 H198" },
-  { domain: "bodyd", draw: "M290 252 V420 M290 390 H242", motion: "M290 252 V390 H242" },
-  { domain: "info", draw: "M220 560 V412", motion: "M220 560 V412" },
+  { domain: "powertrain", draw: "M222 150 V364", motion: "M222 150 V364" },
+  { domain: "chassis", draw: "M150 205 V390 H194", motion: "M150 205 V390 H194" },
+  { domain: "bodyd", draw: "M290 252 V420 M290 390 H246", motion: "M290 252 V390 H246" },
+  { domain: "info", draw: "M220 560 V416", motion: "M220 560 V416" },
 ];
 
 const STUBS = ["M205 150 H222", "M240 150 H222"]; // ecm, tcm into powertrain spine
+
+// Domain zones (trust boundaries), enclosing each domain's ECUs.
+const ZONES: { domain: Domain; x: number; y: number; w: number; h: number; lx: number; ly: number }[] = [
+  { domain: "powertrain", x: 176, y: 126, w: 92, h: 130, lx: 222, ly: 119 },
+  { domain: "chassis", x: 118, y: 180, w: 62, h: 180, lx: 149, ly: 173 },
+  { domain: "bodyd", x: 261, y: 228, w: 60, h: 220, lx: 291, ly: 221 },
+  { domain: "info", x: 189, y: 444, w: 62, h: 142, lx: 220, ly: 601 },
+];
 
 const CAR_STATIC = `
   <g aria-hidden="true">
@@ -28,13 +36,14 @@ const CAR_STATIC = `
       C119 582 116 562 117 544 C118 528 121 510 122 480 C123 440 122 380 123 320
       C124 280 125 240 122 200 C120 182 118 168 119 152 C120 135 122 120 128 100
       C132 80 142 70 160 70 Z"/>
+    <rect class="car-detail" x="156" y="78" width="26" height="9" rx="4"/>
+    <rect class="car-detail" x="258" y="78" width="26" height="9" rx="4"/>
+    <rect class="car-detail" x="185" y="92" width="70" height="42" rx="6"/>
+    <path class="car-faint" d="M198 96 V130 M242 96 V130 M185 113 H255"/>
     <path class="car-line" d="M186 246 L254 246 L270 288 L170 288 Z" style="fill:var(--glass)"/>
     <rect class="car-line" x="170" y="288" width="100" height="142" rx="6"
       style="fill:color-mix(in srgb,var(--car) 9%,transparent)"/>
     <path class="car-line" d="M170 430 L270 430 L254 478 L186 478 Z" style="fill:var(--glass)"/>
-    <path class="car-faint" d="M198 108 C200 160 194 206 192 244"/>
-    <path class="car-faint" d="M242 108 C240 160 246 206 248 244"/>
-    <path class="car-faint" d="M186 92 Q220 86 254 92"/>
     <path class="car-faint" d="M180 520 Q220 530 260 520"/>
     <path class="car-faint" d="M172 600 Q220 610 268 600"/>
     <path class="car-line" d="M170 284 L150 278 L152 292 L170 296 Z"/>
@@ -62,7 +71,6 @@ export function createVehiclePlan(reduceMotion: boolean): VehiclePlan {
     "aria-label": t("fig.alt"),
   });
 
-  // defs: motion paths
   const defs = el("defs");
   TRUNKS.forEach((trk, i) => defs.append(el("path", { id: `motion-${i}`, d: trk.motion })));
   svg.append(defs);
@@ -72,20 +80,36 @@ export function createVehiclePlan(reduceMotion: boolean): VehiclePlan {
   carG.innerHTML = CAR_STATIC;
   svg.append(carG);
 
+  // domain zones
+  const zoneLayer = el("g", { "aria-hidden": "true" });
+  for (const z of ZONES) {
+    const color = domVar(z.domain);
+    zoneLayer.append(
+      el("rect", { class: "zone", x: z.x, y: z.y, width: z.w, height: z.h, rx: 11, style: `color:${color}` }),
+    );
+    zoneLayer.append(
+      el("text", { class: "zone-label", x: z.lx, y: z.ly, "text-anchor": "middle", style: `color:${color}` }, [
+        t(`legend.${z.domain}`),
+      ]),
+    );
+  }
+  svg.append(zoneLayer);
+
   // buses
   const busLayer = el("g");
   const busEls: SVGElement[] = [];
   for (const trk of TRUNKS) {
-    const p = el("path", { class: "bus", d: trk.draw, style: `stroke:${domVar(trk.domain)}` });
+    const color = domVar(trk.domain);
+    const p = el("path", { class: "bus", d: trk.draw, style: `color:${color};stroke:${color}` });
     busEls.push(p);
     busLayer.append(p);
   }
   for (const d of STUBS) {
-    busLayer.append(el("path", { class: "bus", d, style: "stroke:var(--powertrain)" }));
+    busLayer.append(el("path", { class: "bus", d, style: "color:var(--powertrain);stroke:var(--powertrain)" }));
   }
   svg.append(busLayer);
 
-  // ambient traffic (skipped entirely when reduced motion is requested)
+  // ambient traffic (skipped when reduced motion is requested)
   if (!reduceMotion) {
     const trafficLayer = el("g", { "aria-hidden": "true" });
     TRUNKS.forEach((trk, i) => {
@@ -115,11 +139,11 @@ export function createVehiclePlan(reduceMotion: boolean): VehiclePlan {
   const pathLayer = el("g", { "aria-hidden": "true" });
   svg.append(pathLayer);
 
-  // gateway
+  // gateway (central hub)
   const gw = el("g", { class: "gw" });
-  gw.append(el("rect", { class: "gw-box", x: 198, y: 368, width: 44, height: 44, rx: 8 }));
-  gw.append(el("text", { class: "gw-t", x: 220, y: 388, "text-anchor": "middle" }, ["CENTRAL"]));
-  gw.append(el("text", { class: "gw-t", x: 220, y: 398, "text-anchor": "middle" }, ["GATEWAY"]));
+  gw.append(el("rect", { class: "gw-box", x: 193, y: 363, width: 54, height: 54, rx: 9 }));
+  gw.append(el("text", { class: "gw-t", x: 220, y: 386, "text-anchor": "middle" }, ["CENTRAL"]));
+  gw.append(el("text", { class: "gw-t", x: 220, y: 400, "text-anchor": "middle" }, ["GATEWAY"]));
   svg.append(gw);
 
   // nodes
@@ -136,10 +160,8 @@ export function createVehiclePlan(reduceMotion: boolean): VehiclePlan {
     g.append(
       el("text", { class: "lbl u", x: labelX, y: n.y + 10, "text-anchor": anchor }, [t(`node.${n.id}.sub`)]),
     );
-    g.append(el("circle", { class: "node", cx: n.x, cy: n.y, r: 4.2 }));
-    g.append(
-      el("circle", { class: "node-ring", cx: n.x, cy: n.y, r: 4.2, style: `stroke:${domVar(n.domain)}` }),
-    );
+    g.append(el("circle", { class: "node", cx: n.x, cy: n.y, r: 5 }));
+    g.append(el("circle", { class: "node-ring", cx: n.x, cy: n.y, r: 5, style: `stroke:${domVar(n.domain)}` }));
     nodeEls.set(n.id, g);
     nodeLayer.append(g);
   }
@@ -150,12 +172,10 @@ export function createVehiclePlan(reduceMotion: boolean): VehiclePlan {
   const entryEls = new Map<string, SVGGElement>();
   for (const e of vehicle.entries) {
     const g = el("g", { class: "entry-g" });
-    g.append(el("circle", { class: "mk", cx: e.x, cy: e.y, r: 4.5 }));
+    g.append(el("circle", { class: "mk", cx: e.x, cy: e.y, r: 5 }));
     const left = e.side === "left";
-    const lx = left ? e.x - 9 : e.x + 9;
-    g.append(
-      el("text", { x: lx, y: e.y + 3, "text-anchor": left ? "end" : "start" }, [t(`entry.${e.id}.label`)]),
-    );
+    const lx = left ? e.x - 10 : e.x + 10;
+    g.append(el("text", { x: lx, y: e.y + 3, "text-anchor": left ? "end" : "start" }, [t(`entry.${e.id}.label`)]));
     entryEls.set(e.id, g);
     entryLayer.append(g);
   }
@@ -182,19 +202,31 @@ export function createVehiclePlan(reduceMotion: boolean): VehiclePlan {
     return points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x} ${p.y}`).join(" ");
   }
 
+  // Draw the attack path and, unless reduced motion, a packet travelling along it.
+  function drawPath(points: Pt[]): void {
+    if (points.length < 2) return;
+    pathLayer.append(el("path", { class: "atkpath", id: "atk-live", d: pathD(points) }));
+    if (reduceMotion) return;
+    const packet = el("circle", { class: "packet", r: 3.4 });
+    const motion = el("animateMotion", { dur: "1.8s", repeatCount: "indefinite", rotate: "0", begin: "0.15s" });
+    motion.append(el("mpath", { href: "#atk-live" }));
+    packet.append(motion);
+    pathLayer.append(packet);
+  }
+
   function burst(p: Pt, color: string): void {
     const ring = el("circle", {
       cx: p.x,
       cy: p.y,
-      r: reduceMotion ? 12 : 6,
+      r: reduceMotion ? 13 : 7,
       fill: "none",
       stroke: color,
-      "stroke-width": 1.6,
-      opacity: reduceMotion ? 0.8 : 1,
+      "stroke-width": 1.8,
+      opacity: reduceMotion ? 0.85 : 1,
     });
     if (!reduceMotion) {
       ring.append(
-        el("animate", { attributeName: "r", values: "6;16", dur: "1.2s", repeatCount: "indefinite" }),
+        el("animate", { attributeName: "r", values: "7;17", dur: "1.2s", repeatCount: "indefinite" }),
         el("animate", { attributeName: "opacity", values: ".9;0", dur: "1.2s", repeatCount: "indefinite" }),
       );
     }
@@ -204,10 +236,7 @@ export function createVehiclePlan(reduceMotion: boolean): VehiclePlan {
   function setBusHot(domains: Domain[], on: boolean): void {
     for (const [idx, trk] of TRUNKS.entries()) {
       if (!domains.includes(trk.domain)) continue;
-      const node = busEls[idx];
-      node.style.opacity = on ? "1" : "";
-      node.style.strokeWidth = on ? "2.8" : "";
-      node.style.filter = on ? `drop-shadow(0 0 3px ${domVar(trk.domain)})` : "";
+      busEls[idx].classList.toggle("hot", on);
     }
   }
 
@@ -222,33 +251,25 @@ export function createVehiclePlan(reduceMotion: boolean): VehiclePlan {
 
   function setAttack(attack: Attack, blockedBy: Countermeasure | null): void {
     clear();
-
-    // entry pulse
-    const entryEl = entryEls.get(attack.entry);
-    if (entryEl) entryEl.classList.add("hot");
-
-    // resolve route points
+    entryEls.get(attack.entry)?.classList.add("hot");
     const routePts = attack.route.map(resolve);
 
     if (blockedBy) {
-      // Blocked: the chain stops. Segmentation rejects at the gateway; the other
-      // defences at the targeted interface (the last route point). Nothing is
-      // marked compromised, and the buses are not lit as reached.
+      // Segmentation rejects at the gateway; other defences at the targeted
+      // interface (last point). Nothing is marked compromised, buses stay cold.
       let cut = routePts.length;
       if (blockedBy === "segmentation") {
         const gi = attack.route.indexOf("gateway");
         cut = gi >= 0 ? gi + 1 : Math.max(1, routePts.length - 1);
       }
       const shown = routePts.slice(0, cut);
-      if (shown.length >= 2) pathLayer.append(el("path", { class: "atkpath", d: pathD(shown) }));
+      drawPath(shown);
       burst(shown[shown.length - 1] ?? gatewayPt, "var(--ok)");
       return;
     }
 
-    // Passes: the full path, the reached buses lit, and the target compromised.
-    if (routePts.length >= 2) {
-      pathLayer.append(el("path", { class: "atkpath", d: pathD(routePts) }));
-    }
+    // Passes: full path, buses reached lit, target compromised.
+    drawPath(routePts);
     if (attack.busHighlight) setBusHot(attack.busHighlight, true);
     if (attack.target === "gateway") {
       gw.classList.add("gw-crit");
