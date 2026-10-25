@@ -1,0 +1,81 @@
+/* Design tokens. Thème sombre graphite d'abord, clair facon calque bleu.
+   Couleurs par domaine de bus = information, pas decoration. */
+:root {
+  --bg: #15181d;
+  --surface: #1b1f26;
+  --surface-2: #20252d;
+  --line: #2b313a;
+  --line-soft: #242a32;
+  --ink: #e9e6df;
+  --ink-soft: #a7a69e;
+  --ink-faint: #8b8f88;
+
+  --car: #565c66;
+  --car-soft: #3a3f48;
+  --glass: rgba(120, 145, 170, 0.07);
+
+  --powertrain: #d79a55;
+  --chassis: #58b7af;
+  --bodyd: #ab8fcb;
+  --info: #92b56d;
+
+  --attack: #e5674f;
+  --ok: #73b183;
+  --accent: #58b7af;
+
+  --f-serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --f-sans: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --radius: 12px;
+  --radius-sm: 9px;
+  --maxw: 1120px;
+
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #e7eaec;
+    --surface: #f3f5f6;
+    --surface-2: #eceff1;
+    --line: #d2d7db;
+    --line-soft: #dde1e4;
+    --ink: #1d232b;
+    --ink-soft: #515a63;
+    --ink-faint: #6a727b;
+    --car: #9aa2ac;
+    --car-soft: #c3c9cf;
+    --glass: rgba(40, 70, 110, 0.05);
+    --powertrain: #aa6418;
+    --chassis: #1c877f;
+    --bodyd: #7351a4;
+    --info: #587f36;
+    --attack: #c4442d;
+    --ok: #2e8647;
+    --accent: #1c877f;
+    color-scheme: light;
+  }
+}
+
+:root[data-theme="light"] {
+  --bg: #e7eaec;
+  --surface: #f3f5f6;
+  --surface-2: #eceff1;
+  --line: #d2d7db;
+  --line-soft: #dde1e4;
+  --ink: #1d232b;
+  --ink-soft: #515a63;
+  --ink-faint: #6a727b;
+  --car: #9aa2ac;
+  --car-soft: #c3c9cf;
+  --glass: rgba(40, 70, 110, 0.05);
+  --powertrain: #aa6418;
+  --chassis: #1c877f;
+  --bodyd: #7351a4;
+  --info: #587f36;
+  --attack: #c4442d;
+  --ok: #2e8647;
+  --accent: #1c877f;
+  color-scheme: light;
+}
