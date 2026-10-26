@@ -12,6 +12,7 @@ import { createSwitches } from "./ui/switches";
 import { createCanbusView } from "./ui/canbus";
 import { createToolsView } from "./ui/tools";
 import { createFrameView } from "./ui/frame";
+import { createReverseView } from "./ui/reverse";
 import { createUdsView } from "./ui/uds";
 import { createAtelierView } from "./ui/atelier";
 import { blockingMeasure } from "./sim/engine";
@@ -29,11 +30,12 @@ let ficheOpen = true;
 let trafficTimer: number | undefined;
 
 // ---- routing (hash based, GitHub Pages friendly) ----
-type Route = "home" | "canbus" | "decoder" | "uds" | "atelier" | "tools";
+type Route = "home" | "canbus" | "decoder" | "reverse" | "uds" | "atelier" | "tools";
 function currentRoute(): Route {
   const hash = location.hash.replace(/^#\/?/, "");
   if (hash === "bus-can") return "canbus";
   if (hash === "decodeur") return "decoder";
+  if (hash === "reverse") return "reverse";
   if (hash === "uds") return "uds";
   if (hash === "atelier") return "atelier";
   if (hash === "outils") return "tools";
@@ -126,6 +128,7 @@ function render(): void {
     navLink("home", "#/", "nav.explore", route),
     navLink("canbus", "#/bus-can", "nav.canbus", route),
     navLink("decoder", "#/decodeur", "nav.decoder", route),
+    navLink("reverse", "#/reverse", "nav.reverse", route),
     navLink("uds", "#/uds", "nav.uds", route),
     navLink("atelier", "#/atelier", "nav.atelier", route),
     navLink("tools", "#/outils", "nav.tools", route),
@@ -155,6 +158,8 @@ function render(): void {
     main.append(createCanbusView(), footer);
   } else if (route === "decoder") {
     main.append(createFrameView(), footer);
+  } else if (route === "reverse") {
+    main.append(createReverseView(), footer);
   } else if (route === "uds") {
     main.append(createUdsView(), footer);
   } else if (route === "atelier") {

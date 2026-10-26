@@ -13,6 +13,7 @@
   "nav.explore": "Explorer",
   "nav.canbus": "Der CAN-Bus",
   "nav.decoder": "Decoder",
+  "nav.reverse": "Reverse",
   "nav.uds": "UDS",
   "nav.atelier": "Werkstatt",
   "nav.tools": "Werkzeuge",
