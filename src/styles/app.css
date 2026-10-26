@@ -1550,3 +1550,424 @@ table.bytes tr.muted td {
 .decoder-page {
   max-width: 62rem;
 }
+
+/* ======================================================================
+   Decodeur de trame : bac a sable visuel (signal -> controle -> trame)
+   ====================================================================== */
+
+.sandbox {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  margin: 8px 0 12px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+  align-items: start;
+}
+@media (min-width: 900px) {
+  .sandbox {
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1fr);
+    gap: 30px;
+  }
+}
+
+/* --- zone visuelle (heros) --- */
+.sb-visual {
+  display: grid;
+  place-items: center;
+  min-height: 210px;
+  padding: 8px;
+}
+.sb-visual svg {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+}
+@media (min-width: 900px) {
+  .sb-visual {
+    position: sticky;
+    top: max(16px, env(safe-area-inset-top, 0px));
+    align-self: start;
+    min-height: 240px;
+  }
+}
+@media (max-width: 899px) {
+  .sb-visual {
+    position: sticky;
+    top: max(6px, env(safe-area-inset-top, 0px));
+    z-index: 3;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line-soft);
+    min-height: 150px;
+  }
+  .sb-visual svg {
+    max-width: 230px;
+  }
+}
+
+/* gauge */
+.gauge-arc {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+.gauge-red {
+  fill: none;
+  stroke: var(--attack);
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+.gauge-tick {
+  stroke: var(--ink-faint);
+  stroke-width: 2;
+}
+.gauge-needle {
+  stroke: var(--powertrain);
+  stroke-width: 4;
+  stroke-linecap: round;
+  transform-origin: 130px 140px;
+  transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.gauge-hub {
+  fill: var(--powertrain);
+}
+.gauge-end {
+  fill: var(--ink-faint);
+  font-family: var(--f-mono);
+  font-size: 12px;
+}
+
+/* clignotants */
+.turn-arrow {
+  fill: var(--line);
+  transition: fill 0.18s ease;
+}
+.turn-arrow.on {
+  fill: var(--info);
+  animation: blinkpulse 0.9s steps(1, end) infinite;
+}
+@keyframes blinkpulse {
+  50% {
+    opacity: 0.2;
+  }
+}
+
+/* cadenas */
+.padlock .pad-body {
+  fill: color-mix(in srgb, var(--ok) 12%, var(--surface-2));
+  stroke: var(--ok);
+  stroke-width: 2;
+  transition: stroke 0.2s ease, fill 0.2s ease;
+}
+.padlock .pad-shackle {
+  fill: none;
+  stroke: var(--ok);
+  stroke-width: 4;
+  transition: stroke 0.2s ease, transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transform-origin: center;
+}
+.padlock .pad-hole {
+  fill: var(--ok);
+  transition: fill 0.2s ease;
+}
+.padlock.open .pad-body {
+  stroke: var(--attack);
+  fill: color-mix(in srgb, var(--attack) 12%, var(--surface-2));
+}
+.padlock.open .pad-shackle {
+  stroke: var(--attack);
+  transform: translate(-9px, -7px) rotate(-20deg);
+}
+.padlock.open .pad-hole {
+  fill: var(--attack);
+}
+
+/* --- panneau de controle --- */
+.sig-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.sig-chip {
+  font-family: var(--f-sans);
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.sig-chip:hover {
+  border-color: var(--ink-faint);
+  color: var(--ink);
+}
+.sig-chip.active {
+  color: var(--ink);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface-2));
+}
+
+.control {
+  margin-top: 18px;
+}
+.big-val {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.bv-num {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: 2.6rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.bv-num.flags {
+  font-family: var(--f-mono);
+  font-size: 1.8rem;
+}
+.bv-unit {
+  font-family: var(--f-sans);
+  font-size: 1rem;
+  color: var(--ink-soft);
+}
+.range-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 16px;
+}
+.range-lab {
+  font-family: var(--f-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+input.range {
+  width: 100%;
+  accent-color: var(--accent);
+  cursor: pointer;
+  height: 24px;
+}
+.endian-toggle {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+.endian-lab {
+  font-family: var(--f-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-right: 2px;
+}
+.endian-btn {
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 5px 11px;
+  cursor: pointer;
+}
+.endian-btn.on {
+  color: var(--ink);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface-2));
+}
+.flag-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+.flag-tog {
+  font-family: var(--f-sans);
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 15px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.flag-tog.on {
+  color: var(--ink);
+  border-color: var(--info);
+  background: color-mix(in srgb, var(--info) 15%, var(--surface-2));
+}
+
+.sig-help {
+  font-family: var(--f-serif);
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 18px 0 0;
+  max-width: 44rem;
+}
+
+.frame-block {
+  margin-top: 20px;
+}
+.fb-cap,
+.interp-k {
+  font-family: var(--f-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.frameband {
+  margin-top: 7px;
+  overflow-x: auto;
+}
+.fb-line {
+  font-family: var(--f-mono);
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+.fb-byte {
+  padding: 2px 1px;
+  border-radius: 3px;
+}
+.fb-byte.muted {
+  color: var(--ink-faint);
+  opacity: 0.5;
+}
+.fb-byte.active {
+  color: var(--ink);
+  font-weight: 600;
+}
+.fb-byte.flash {
+  animation: fbflash 0.55s ease-out;
+}
+@keyframes fbflash {
+  0% {
+    background: color-mix(in srgb, var(--powertrain) 38%, transparent);
+    color: var(--ink);
+  }
+  100% {
+    background: transparent;
+  }
+}
+.interp {
+  font-family: var(--f-mono);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--surface-2);
+  border-left: 2px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 11px 14px;
+  margin: 16px 0 0;
+  overflow-wrap: anywhere;
+}
+.interp-k {
+  margin-right: 8px;
+}
+.sb-meta {
+  font-family: var(--f-sans);
+  font-size: 0.82rem;
+  color: var(--ink-faint);
+  margin: 10px 0 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.src-tag {
+  font-family: var(--f-sans);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+}
+.src-icsim {
+  color: var(--chassis);
+  border-color: color-mix(in srgb, var(--chassis) 45%, transparent);
+}
+.src-obd {
+  color: var(--ink-faint);
+}
+.bits-deep {
+  margin-top: 16px;
+}
+.bits-cap {
+  font-family: var(--f-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 10px;
+}
+.bits-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 6px;
+  max-width: 420px;
+  margin-bottom: 16px;
+}
+.bit {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 7px 0;
+  text-align: center;
+}
+.bit.set {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface-2));
+}
+.bit.changed {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--powertrain) 55%, transparent);
+}
+.bit-i {
+  display: block;
+  font-family: var(--f-sans);
+  font-size: 0.6rem;
+  color: var(--ink-faint);
+}
+.bit-v {
+  display: block;
+  font-family: var(--f-mono);
+  font-size: 1rem;
+  color: var(--ink);
+}
+table.bytes tbody tr.hot td {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gauge-needle,
+  .padlock .pad-shackle {
+    transition: none !important;
+  }
+  .turn-arrow.on {
+    animation: none !important;
+  }
+  .fb-byte.flash {
+    animation: none !important;
+  }
+}
