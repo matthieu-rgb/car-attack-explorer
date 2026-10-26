@@ -1353,16 +1353,16 @@ figure.code pre {
 }
 .byte-grid {
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
+  grid-template-columns: repeat(8, minmax(0, 1fr));
   gap: 7px;
   max-width: 440px;
 }
+.byte-grid .hx {
+  width: 100%;
+}
 @media (max-width: 540px) {
   .byte-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  .hx {
-    width: 100%;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 .fr-out h3 {
@@ -1543,4 +1543,10 @@ table.bytes tr.muted td {
   text-transform: uppercase;
   font-size: 0.72rem;
   letter-spacing: 0.05em;
+}
+
+/* Le decodeur a besoin de plus de largeur que la colonne de lecture (editeur
+   en deux colonnes). */
+.decoder-page {
+  max-width: 62rem;
 }

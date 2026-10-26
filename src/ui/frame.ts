@@ -81,7 +81,7 @@ export function createFrameView(): HTMLElement {
         valid ? `0x${idNum.toString(16).toUpperCase()}` : idInput.value,
         h("span", { class: "dec-sub" }, [
           valid
-            ? `${idNum} · ${idNum.toString(2).padStart(11, "0")}`
+            ? `${t("decoder.dec")} ${idNum} · ${t("decoder.bin")} ${idNum.toString(2).padStart(11, "0")}`
             : t("decoder.invalidId"),
         ]),
       ]),
