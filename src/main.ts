@@ -11,6 +11,9 @@ import { createFiche } from "./ui/fiche";
 import { createSwitches } from "./ui/switches";
 import { createCanbusView } from "./ui/canbus";
 import { createToolsView } from "./ui/tools";
+import { createFrameView } from "./ui/frame";
+import { createUdsView } from "./ui/uds";
+import { createAtelierView } from "./ui/atelier";
 import { blockingMeasure } from "./sim/engine";
 import { t, initLang, getLang, setLang, LANGS, type Lang } from "./i18n";
 import type { Countermeasure } from "./data/types";
@@ -26,10 +29,13 @@ let ficheOpen = true;
 let trafficTimer: number | undefined;
 
 // ---- routing (hash based, GitHub Pages friendly) ----
-type Route = "home" | "canbus" | "tools";
+type Route = "home" | "canbus" | "decoder" | "uds" | "atelier" | "tools";
 function currentRoute(): Route {
   const hash = location.hash.replace(/^#\/?/, "");
   if (hash === "bus-can") return "canbus";
+  if (hash === "decodeur") return "decoder";
+  if (hash === "uds") return "uds";
+  if (hash === "atelier") return "atelier";
   if (hash === "outils") return "tools";
   return "home";
 }
@@ -119,6 +125,9 @@ function render(): void {
   const nav = h("nav", { class: "nav", "aria-label": t("nav.label") }, [
     navLink("home", "#/", "nav.explore", route),
     navLink("canbus", "#/bus-can", "nav.canbus", route),
+    navLink("decoder", "#/decodeur", "nav.decoder", route),
+    navLink("uds", "#/uds", "nav.uds", route),
+    navLink("atelier", "#/atelier", "nav.atelier", route),
     navLink("tools", "#/outils", "nav.tools", route),
   ]);
 
@@ -144,6 +153,12 @@ function render(): void {
   const main = h("main", { id: "content" });
   if (route === "canbus") {
     main.append(createCanbusView(), footer);
+  } else if (route === "decoder") {
+    main.append(createFrameView(), footer);
+  } else if (route === "uds") {
+    main.append(createUdsView(), footer);
+  } else if (route === "atelier") {
+    main.append(createAtelierView(), footer);
   } else if (route === "tools") {
     main.append(createToolsView(), footer);
   } else {
@@ -260,6 +275,21 @@ if (import.meta.env.DEV) {
   if (problems.length > 0) {
     console.warn("[catalog] identifiants a verifier:\n" + problems.join("\n"));
   }
+  void (async () => {
+    const [{ getCanbus }, { getUds }, { getAtelier }, { validateReadingShape }] = await Promise.all([
+      import("./data/canbus"),
+      import("./data/uds"),
+      import("./data/atelier"),
+      import("./data/reading"),
+    ]);
+    const checks: string[] = [];
+    for (const lang of ["de", "en"] as const) {
+      checks.push(...validateReadingShape(getCanbus("fr"), getCanbus(lang), `canbus/${lang}`));
+      checks.push(...validateReadingShape(getUds("fr"), getUds(lang), `uds/${lang}`));
+      checks.push(...validateReadingShape(getAtelier("fr"), getAtelier(lang), `atelier/${lang}`));
+    }
+    if (checks.length > 0) console.warn("[i18n] structure a verifier:\n" + checks.join("\n"));
+  })();
 }
 
 window.addEventListener("hashchange", render);

@@ -4,26 +4,9 @@
 // blocs) reste une source unique : les traductions ne portent que le texte.
 
 import type { Lang } from "../i18n";
+import type { Block, ReadingPage } from "./reading";
 import { canbusText } from "./content/canbus.de";
 import { canbusText as canbusTextEn } from "./content/canbus.en";
-
-export type Block =
-  | { t: "p"; text: string }
-  | { t: "ul"; items: string[] }
-  | { t: "frame"; caption: string; lines: { text: string; mark?: "hl" | "ok" }[] }
-  | { t: "duo"; aTitle: string; a: string[]; bTitle: string; b: string[] };
-
-export interface Section {
-  id: string;
-  heading: string;
-  blocks: Block[];
-}
-
-export interface CanbusPage {
-  title: string;
-  lede: string;
-  sections: Section[];
-}
 
 // Surcharge de traduction : par section, l'intitule et la charge utile de
 // chaque bloc dans l'ordre. Un bloc absent retombe sur le francais.
@@ -44,7 +27,7 @@ export interface CanbusOverride {
   sections?: Record<string, SectionOverride>;
 }
 
-const fr: CanbusPage = {
+const fr: ReadingPage = {
   title: "Le bus CAN",
   lede:
     "Le reseau sur lequel presque toutes les attaques finissent par passer. Comment il fonctionne, pourquoi il est si fiable, et pourquoi cette fiabilite meme en fait une cible.",
@@ -221,10 +204,12 @@ function applyBlock(base: Block, payload: BlockPayload | undefined): Block {
         return { t: "duo", aTitle: payload.aTitle, a: payload.a, bTitle: payload.bTitle, b: payload.b };
       }
       return base;
+    default:
+      return base;
   }
 }
 
-export function getCanbus(lang: Lang): CanbusPage {
+export function getCanbus(lang: Lang): ReadingPage {
   if (lang === "fr") return fr;
   const ov = overrides[lang];
   if (!ov || !ov.sections) {
