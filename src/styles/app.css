@@ -831,6 +831,48 @@ footer.ethic p {
 }
 .frame-dot {
   filter: drop-shadow(0 0 2px currentColor);
+  transition: opacity 0.3s ease;
+}
+/* legitimate traffic stalls under a flood, goes silent under a bus-off */
+.frame-dot.dim {
+  opacity: 0.12 !important;
+}
+.frame-dot.mute {
+  opacity: 0 !important;
+}
+/* a bus choked by garbage frames: the trunk turns red and pulses hard */
+.bus.choked {
+  stroke: var(--attack) !important;
+  color: var(--attack);
+  stroke-width: 3.4;
+  filter: drop-shadow(0 0 4px var(--attack));
+  animation: choke 0.5s ease-in-out infinite;
+}
+@keyframes choke {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+/* a bus gone quiet (a node forced bus-off): the trunk fades to a dashed line */
+.bus.quiet {
+  opacity: 0.22;
+  stroke-dasharray: 2 6;
+}
+/* garbage frames poured onto the bus during a flood */
+.flood-dot {
+  fill: var(--attack);
+  filter: drop-shadow(0 0 2px var(--attack));
+}
+/* the single forged frame of an injection */
+.forge-dot {
+  fill: var(--attack);
+  stroke: var(--bg);
+  stroke-width: 1;
+  filter: drop-shadow(0 0 3px var(--attack));
 }
 .target-crit .node-ring {
   stroke: var(--attack) !important;
@@ -850,6 +892,7 @@ body.reduce .atkpath,
 body.reduce .frame-dot,
 body.reduce .readout .live,
 body.reduce .bus.hot,
+body.reduce .bus.choked,
 body.reduce .entry-g.hot .mk {
   animation: none !important;
 }

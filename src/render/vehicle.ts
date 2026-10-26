@@ -109,10 +109,13 @@ export function createVehiclePlan(reduceMotion: boolean): VehiclePlan {
   }
   svg.append(busLayer);
 
-  // ambient traffic (skipped when reduced motion is requested)
+  // ambient traffic (skipped when reduced motion is requested). Dots are kept
+  // per domain so an attack can dim or mute the legitimate flow on a bus.
+  const ambientByDomain = new Map<Domain, SVGCircleElement[]>();
   if (!reduceMotion) {
     const trafficLayer = el("g", { "aria-hidden": "true" });
     TRUNKS.forEach((trk, i) => {
+      const bucket: SVGCircleElement[] = [];
       for (let k = 0; k < 2; k++) {
         const dot = el("circle", {
           class: "frame-dot",
@@ -120,7 +123,7 @@ export function createVehiclePlan(reduceMotion: boolean): VehiclePlan {
           fill: domVar(trk.domain),
           color: domVar(trk.domain),
           opacity: k === 0 ? 1 : 0.55,
-        });
+        }) as SVGCircleElement;
         const anim = el("animateMotion", {
           dur: `${3 + i * 0.3 + k * 0.4}s`,
           begin: `${k * 1.6}s`,
@@ -129,11 +132,17 @@ export function createVehiclePlan(reduceMotion: boolean): VehiclePlan {
         });
         anim.append(el("mpath", { href: `#motion-${i}` }));
         dot.append(anim);
+        bucket.push(dot);
         trafficLayer.append(dot);
       }
+      ambientByDomain.set(trk.domain, bucket);
     });
     svg.append(trafficLayer);
   }
+
+  // disruption layer: garbage / forged frames an attack pours onto the bus
+  const disruptLayer = el("g", { "aria-hidden": "true" });
+  svg.append(disruptLayer);
 
   // attack path layer (under gateway/nodes so labels stay readable)
   const pathLayer = el("g", { "aria-hidden": "true" });
@@ -281,6 +290,8 @@ export function createVehiclePlan(reduceMotion: boolean): VehiclePlan {
     fxLayer.append(ring);
   }
 
+  const ALL_DOMAINS: Domain[] = ["powertrain", "chassis", "bodyd", "info"];
+
   function setBusHot(domains: Domain[], on: boolean): void {
     for (const [idx, trk] of TRUNKS.entries()) {
       if (!domains.includes(trk.domain)) continue;
@@ -288,13 +299,70 @@ export function createVehiclePlan(reduceMotion: boolean): VehiclePlan {
     }
   }
 
+  function trunkIndex(d: Domain): number {
+    return TRUNKS.findIndex((trk) => trk.domain === d);
+  }
+
+  // Which buses an attack disturbs, and how (see Attack.disrupt).
+  function affectedDomains(attack: Attack): Domain[] {
+    if (attack.busHighlight && attack.busHighlight.length) return attack.busHighlight;
+    const n = attack.target ? nodeById.get(attack.target) : undefined;
+    if (n) return [n.domain];
+    return ALL_DOMAINS;
+  }
+
+  // A frame travelling a trunk: garbage (flood) or a single forged one (inject).
+  function disruptDot(idx: number, cls: string, r: number, dur: number, begin: number): void {
+    if (idx < 0 || reduceMotion) return;
+    const dot = el("circle", { class: cls, r });
+    const anim = el("animateMotion", {
+      dur: `${dur}s`,
+      begin: `${begin}s`,
+      repeatCount: "indefinite",
+      rotate: "0",
+    });
+    anim.append(el("mpath", { href: `#motion-${idx}` }));
+    dot.append(anim);
+    disruptLayer.append(dot);
+  }
+
+  function dimAmbient(d: Domain, cls: "dim" | "mute"): void {
+    for (const dot of ambientByDomain.get(d) ?? []) dot.classList.add(cls);
+  }
+
+  function disturbFlow(attack: Attack): void {
+    const kind = attack.disrupt;
+    if (!kind) return; // passive: the legitimate flow is read, not disturbed
+    const domains = affectedDomains(attack);
+    for (const d of domains) {
+      const idx = trunkIndex(d);
+      if (idx < 0) continue;
+      if (kind === "flood") {
+        busEls[idx].classList.add("choked");
+        dimAmbient(d, "dim");
+        for (let k = 0; k < 4; k++) disruptDot(idx, "flood-dot", 2.3, 0.55 + k * 0.08, k * 0.16);
+      } else if (kind === "silence") {
+        busEls[idx].classList.add("quiet");
+        dimAmbient(d, "mute");
+      } else {
+        // inject: one forged frame rides the bus among the legitimate traffic
+        disruptDot(idx, "forge-dot", 3, 1.9, 0.3);
+      }
+    }
+  }
+
   function clear(): void {
     pathLayer.replaceChildren();
     fxLayer.replaceChildren();
+    disruptLayer.replaceChildren();
     for (const g of nodeEls.values()) g.classList.remove("target-crit");
     for (const g of entryEls.values()) g.classList.remove("hot");
     gw.classList.remove("gw-crit");
-    setBusHot(["powertrain", "chassis", "bodyd", "info"], false);
+    setBusHot(ALL_DOMAINS, false);
+    for (const p of busEls) p.classList.remove("choked", "quiet");
+    for (const bucket of ambientByDomain.values()) {
+      for (const dot of bucket) dot.classList.remove("dim", "mute");
+    }
   }
 
   function setAttack(attack: Attack, blockedBy: Countermeasure | null): void {
@@ -330,6 +398,7 @@ export function createVehiclePlan(reduceMotion: boolean): VehiclePlan {
     // Passes: full path, buses reached lit, target compromised.
     drawPath(routePts);
     if (attack.busHighlight) setBusHot(attack.busHighlight, true);
+    disturbFlow(attack);
     if (attack.target === "gateway") {
       gw.classList.add("gw-crit");
     } else if (attack.target) {

@@ -43,6 +43,90 @@ const fr: ReadingPage = {
       ],
     },
     {
+      id: "reproduire",
+      heading: "Reproduire en vrai",
+      blocks: [
+        {
+          t: "p",
+          text: "Le virtuel suffit pour apprendre la methode ; le cuivre la rend concrete. Quatre montages, du plus simple a quinze euros au plus parlant en demonstration, tous documentes et reproductibles.",
+        },
+        {
+          t: "table",
+          caption: "Du banc jouet au tableau de bord qui s'allume",
+          head: ["Montage", "Materiel", "Ce qu'on reproduit"],
+          rows: [
+            [
+              "Banc deux noeuds",
+              "2 Arduino ou ESP32, 2 transceivers (MCP2515 ou TWAI natif), 2 resistances 120 ohms",
+              "Le coeur du reverse : un noeud emet, l'autre ecoute. Sniffer, diff, injection.",
+            ],
+            [
+              "Pont ESP32",
+              "1 ESP32 avec ESP32RET ou CANMIM",
+              "Capture, rejeu et homme du milieu sur un vrai bus, pilotes depuis le PC (SavvyCAN).",
+            ],
+            [
+              "Raspberry Pi + CAN-HAT",
+              "1 Raspberry Pi, 1 chapeau CAN (PiCAN, Waveshare)",
+              "Les memes candump / cansend que l'Atelier, mais sur une interface can0 physique.",
+            ],
+            [
+              "Tableau de bord reel",
+              "Un combine d'instruments de casse, une alimentation, un bus termine",
+              "Les aiguilles bougent pour de vrai quand on forge les trames. La demonstration qui marque.",
+            ],
+          ],
+        },
+        {
+          t: "ul",
+          items: [
+            "Cablage : CAN-H relie a CAN-H, CAN-L a CAN-L, et une resistance de 120 ohms a chaque extremite du bus.",
+            "Le piege classique : beaucoup de modules MCP2515 ont un quartz a 8 MHz, pas 16. Si l'horloge ne correspond pas, le bus reste muet.",
+            "Debit : la plupart des exemples tournent a 250 ou 500 kbit/s, et les deux noeuds doivent etre regles pareil.",
+          ],
+        },
+        {
+          t: "p",
+          text: "Le pont avec ce site : un Raspberry Pi muni d'un CAN-HAT expose une vraie interface SocketCAN. Toutes les commandes vues plus haut fonctionnent a l'identique, et ICSim tourne dessus sans rien changer.",
+        },
+        {
+          t: "code",
+          caption: "Passer ICSim du bus virtuel a une interface CAN reelle",
+          lines: [
+            "sudo ip link set can0 type can bitrate 500000",
+            "sudo ip link set up can0",
+            "./icsim can0        # le meme tableau de bord, sur le bus physique",
+            "./controls can0",
+          ],
+        },
+        {
+          t: "links",
+          items: [
+            {
+              label: "Banc deux noeuds pas a pas (SparkFun CAN Bus Shield)",
+              url: "https://www.instructables.com/Sparkfun-CAN-Bus-Shield-Tutorial",
+              note: "Deux Arduino, cablage et terminaison expliques.",
+            },
+            {
+              label: "ESP32RET",
+              url: "https://github.com/aszu80/ESP32RET",
+              note: "Faire d'un ESP32 un outil de capture et de rejeu, compatible SavvyCAN.",
+            },
+            {
+              label: "CANMIM",
+              url: "https://github.com/zeroomega/canmim",
+              note: "Homme du milieu CAN sur ESP32 : lire, filtrer, injecter, reemettre.",
+            },
+            {
+              label: "Pro-CHASER (testbed de recherche)",
+              url: "https://researcher.manipal.edu/en/publications/pro-chaser-a-prototype-testbed-for-car-hacking-attack-simulation-/",
+              note: "Un banc Raspberry Pi + CAN-HAT decrit dans une publication.",
+            },
+          ],
+        },
+      ],
+    },
+    {
       id: "antiseche",
       heading: "Antiseche can-utils",
       blocks: [

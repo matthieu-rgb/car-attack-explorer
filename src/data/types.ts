@@ -48,6 +48,12 @@ export interface Attack {
   // when set, the attack lights whole domains rather than a single target
   busHighlight?: Domain[];
   target?: string; // EcuNode id flashed as compromised, if any
+  // how the attack disturbs the live traffic on the bus (drives the schematic):
+  // "flood"   the bus is choked by garbage frames, legitimate traffic stalls
+  // "inject"  one forged frame rides the bus among the legitimate ones
+  // "silence" a node stops talking (bus-off): its domain goes quiet
+  // absent    passive (sniffing): the flow is read, not disturbed
+  disrupt?: "flood" | "inject" | "silence";
 
   resume: string; // niveau 1, simple
   principe: string;

@@ -38,6 +38,90 @@ export const atelierEn: ReadingPage | null = {
       ],
     },
     {
+      id: "reproduire",
+      heading: "Reproduce it for real",
+      blocks: [
+        {
+          t: "p",
+          text: "The virtual bench is enough to learn the method; copper makes it concrete. Four builds, from the simplest at fifteen euros to the most striking for a demo, all documented and reproducible.",
+        },
+        {
+          t: "table",
+          caption: "From a toy bench to a cluster that lights up",
+          head: ["Build", "Hardware", "What it reproduces"],
+          rows: [
+            [
+              "Two-node bench",
+              "2 Arduino or ESP32, 2 transceivers (MCP2515 or native TWAI), 2 resistors of 120 ohms",
+              "The heart of reversing: one node sends, the other listens. Sniff, diff, inject.",
+            ],
+            [
+              "ESP32 bridge",
+              "1 ESP32 with ESP32RET or CANMIM",
+              "Capture, replay and man-in-the-middle on a real bus, driven from the PC (SavvyCAN).",
+            ],
+            [
+              "Raspberry Pi + CAN-HAT",
+              "1 Raspberry Pi, 1 CAN hat (PiCAN, Waveshare)",
+              "The same candump / cansend as the Workshop, but on a physical can0 interface.",
+            ],
+            [
+              "Real instrument cluster",
+              "A scrapyard cluster, a power supply, a terminated bus",
+              "The needles move for real when you forge the frames. The demo that sticks.",
+            ],
+          ],
+        },
+        {
+          t: "ul",
+          items: [
+            "Wiring: CAN-H to CAN-H, CAN-L to CAN-L, and a 120 ohm resistor at each end of the bus.",
+            "The classic trap: many MCP2515 modules use an 8 MHz crystal, not 16. If the clock does not match, the bus stays silent.",
+            "Bit rate: most examples run at 250 or 500 kbit/s, and both nodes must be set the same.",
+          ],
+        },
+        {
+          t: "p",
+          text: "The bridge to this site: a Raspberry Pi with a CAN-HAT exposes a real SocketCAN interface. Every command shown above works unchanged, and ICSim runs on it with no modification.",
+        },
+        {
+          t: "code",
+          caption: "Move ICSim from the virtual bus to a real CAN interface",
+          lines: [
+            "sudo ip link set can0 type can bitrate 500000",
+            "sudo ip link set up can0",
+            "./icsim can0        # the same cluster, on the physical bus",
+            "./controls can0",
+          ],
+        },
+        {
+          t: "links",
+          items: [
+            {
+              label: "Two-node bench step by step (SparkFun CAN Bus Shield)",
+              url: "https://www.instructables.com/Sparkfun-CAN-Bus-Shield-Tutorial",
+              note: "Two Arduinos, wiring and termination explained.",
+            },
+            {
+              label: "ESP32RET",
+              url: "https://github.com/aszu80/ESP32RET",
+              note: "Turn an ESP32 into a capture-and-replay tool, compatible with SavvyCAN.",
+            },
+            {
+              label: "CANMIM",
+              url: "https://github.com/zeroomega/canmim",
+              note: "Man-in-the-middle on CAN with an ESP32: read, filter, inject, re-emit.",
+            },
+            {
+              label: "Pro-CHASER (research testbed)",
+              url: "https://researcher.manipal.edu/en/publications/pro-chaser-a-prototype-testbed-for-car-hacking-attack-simulation-/",
+              note: "A Raspberry Pi + CAN-HAT bench described in a publication.",
+            },
+          ],
+        },
+      ],
+    },
+    {
       id: "antiseche",
       heading: "can-utils cheat sheet",
       blocks: [

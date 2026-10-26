@@ -39,6 +39,90 @@ export const atelierDe: ReadingPage | null = {
       ],
     },
     {
+      id: "reproduire",
+      heading: "In echt nachbauen",
+      blocks: [
+        {
+          t: "p",
+          text: "Das Virtuelle reicht, um die Methode zu lernen; das Kupfer macht sie greifbar. Vier Aufbauten, vom einfachsten fuer fuenfzehn Euro bis zum eindruecklichsten fuer die Vorfuehrung, alle dokumentiert und reproduzierbar.",
+        },
+        {
+          t: "table",
+          caption: "Vom Spielzeugstand bis zum Kombiinstrument, das aufleuchtet",
+          head: ["Aufbau", "Material", "Was man nachbaut"],
+          rows: [
+            [
+              "Zwei-Knoten-Stand",
+              "2 Arduino oder ESP32, 2 Transceiver (MCP2515 oder natives TWAI), 2 Widerstaende mit 120 Ohm",
+              "Der Kern des Reversings: ein Knoten sendet, der andere hoert zu. Sniffer, Diff, Injektion.",
+            ],
+            [
+              "ESP32-Bruecke",
+              "1 ESP32 mit ESP32RET oder CANMIM",
+              "Mitschnitt, Replay und Man-in-the-Middle an einem echten Bus, vom PC aus gesteuert (SavvyCAN).",
+            ],
+            [
+              "Raspberry Pi + CAN-HAT",
+              "1 Raspberry Pi, 1 CAN-Aufsatz (PiCAN, Waveshare)",
+              "Dieselben candump / cansend wie in der Werkstatt, aber an einer physischen can0-Schnittstelle.",
+            ],
+            [
+              "Echtes Kombiinstrument",
+              "Ein Kombiinstrument vom Schrott, ein Netzteil, ein terminierter Bus",
+              "Die Zeiger bewegen sich wirklich, wenn man die Frames faelscht. Die Vorfuehrung, die haengen bleibt.",
+            ],
+          ],
+        },
+        {
+          t: "ul",
+          items: [
+            "Verdrahtung: CAN-H an CAN-H, CAN-L an CAN-L, und ein Widerstand von 120 Ohm an jedem Ende des Busses.",
+            "Die klassische Falle: viele MCP2515-Module haben einen Quarz mit 8 MHz, nicht 16. Passt der Takt nicht, bleibt der Bus stumm.",
+            "Datenrate: die meisten Beispiele laufen mit 250 oder 500 kbit/s, und beide Knoten muessen gleich eingestellt sein.",
+          ],
+        },
+        {
+          t: "p",
+          text: "Die Bruecke zu dieser Seite: ein Raspberry Pi mit CAN-HAT stellt eine echte SocketCAN-Schnittstelle bereit. Alle oben gezeigten Befehle funktionieren unveraendert, und ICSim laeuft darauf ohne Anpassung.",
+        },
+        {
+          t: "code",
+          caption: "ICSim vom virtuellen Bus auf eine echte CAN-Schnittstelle bringen",
+          lines: [
+            "sudo ip link set can0 type can bitrate 500000",
+            "sudo ip link set up can0",
+            "./icsim can0        # dasselbe Kombiinstrument, am physischen Bus",
+            "./controls can0",
+          ],
+        },
+        {
+          t: "links",
+          items: [
+            {
+              label: "Zwei-Knoten-Stand Schritt fuer Schritt (SparkFun CAN Bus Shield)",
+              url: "https://www.instructables.com/Sparkfun-CAN-Bus-Shield-Tutorial",
+              note: "Zwei Arduino, Verdrahtung und Terminierung erklaert.",
+            },
+            {
+              label: "ESP32RET",
+              url: "https://github.com/aszu80/ESP32RET",
+              note: "Einen ESP32 zum Mitschnitt- und Replay-Werkzeug machen, kompatibel mit SavvyCAN.",
+            },
+            {
+              label: "CANMIM",
+              url: "https://github.com/zeroomega/canmim",
+              note: "Man-in-the-Middle am CAN mit ESP32: lesen, filtern, injizieren, erneut senden.",
+            },
+            {
+              label: "Pro-CHASER (Forschungs-Testbed)",
+              url: "https://researcher.manipal.edu/en/publications/pro-chaser-a-prototype-testbed-for-car-hacking-attack-simulation-/",
+              note: "Ein Stand aus Raspberry Pi + CAN-HAT, in einer Publikation beschrieben.",
+            },
+          ],
+        },
+      ],
+    },
+    {
       id: "antiseche",
       heading: "can-utils-Spickzettel",
       blocks: [
