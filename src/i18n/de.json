@@ -11,6 +11,7 @@
 
   "nav.label": "Bereiche",
   "nav.explore": "Explorer",
+  "nav.blog": "Analysen",
   "nav.canbus": "Der CAN-Bus",
   "nav.decoder": "Decoder",
   "nav.reverse": "Reverse",
@@ -19,6 +20,23 @@
   "nav.tools": "Werkzeuge",
 
   "canbus.cta": "Angriffe erkunden",
+
+  "blog.title": "Juengste Auto-Hacks entschluesselt",
+  "blog.lede": "Echte, aktuelle Faelle, Schritt fuer Schritt erklaert: wo der Angriff eindrang, was versagte und was man daraus lernt. Fortlaufend aktualisiert.",
+  "blog.readSuffix": "Min. Lesezeit",
+  "blog.back": "Alle Analysen",
+  "blog.sources": "Quellen",
+  "blog.ficheTitle": "Das Wesentliche",
+  "blog.notFound": "Artikel nicht gefunden.",
+  "blog.vector.can": "CAN-Bus",
+  "blog.vector.api": "API / Telematik",
+  "blog.vector.hardware": "Hardware",
+  "blog.vector.rf": "Funk / Bluetooth",
+  "blog.vector.charge": "Laden",
+  "article.cible": "Ziel",
+  "article.entree": "Einstiegspunkt",
+  "article.methode": "Vorgehen",
+  "article.faille": "Schwachstelle",
 
   "decoder.title": "Einen Frame entschlüsseln und verändern",
   "decoder.lede": "Wähle ein Signal, ändere das Byte das es trägt, und beobachte was das Fahrzeug daraus macht.",

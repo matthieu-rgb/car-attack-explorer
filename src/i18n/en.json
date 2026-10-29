@@ -11,6 +11,7 @@
 
   "nav.label": "Sections",
   "nav.explore": "Explorer",
+  "nav.blog": "Analyses",
   "nav.canbus": "The CAN bus",
   "nav.decoder": "Decoder",
   "nav.reverse": "Reverse",
@@ -19,6 +20,23 @@
   "nav.tools": "Tools",
 
   "canbus.cta": "Explore the attacks",
+
+  "blog.title": "Recent car hacks, decoded",
+  "blog.lede": "Real, recent cases explained step by step: where the attack got in, what failed, and the lesson to take away. Updated as new write-ups land.",
+  "blog.readSuffix": "min read",
+  "blog.back": "All analyses",
+  "blog.sources": "Sources",
+  "blog.ficheTitle": "The essentials",
+  "blog.notFound": "Article not found.",
+  "blog.vector.can": "CAN bus",
+  "blog.vector.api": "API / telematics",
+  "blog.vector.hardware": "Hardware",
+  "blog.vector.rf": "Radio / Bluetooth",
+  "blog.vector.charge": "Charging",
+  "article.cible": "Target",
+  "article.entree": "Entry point",
+  "article.methode": "Method",
+  "article.faille": "Flaw",
 
   "decoder.title": "Decode and modify a frame",
   "decoder.lede": "Pick a signal, change the byte that carries it, and watch what the car makes of it.",

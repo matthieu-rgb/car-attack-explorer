@@ -11,6 +11,7 @@
 
   "nav.label": "Sections",
   "nav.explore": "Explorateur",
+  "nav.blog": "Analyses",
   "nav.canbus": "Le bus CAN",
   "nav.decoder": "Decodeur",
   "nav.reverse": "Reverse",
@@ -19,6 +20,23 @@
   "nav.tools": "Outils",
 
   "canbus.cta": "Explorer les attaques",
+
+  "blog.title": "Decryptage des hacks auto recents",
+  "blog.lede": "Des cas reels et recents, expliques pas a pas : par ou l'attaque est entree, ce qui a peche, et la lecon a en tirer. Mis a jour au fil des publications.",
+  "blog.readSuffix": "min de lecture",
+  "blog.back": "Toutes les analyses",
+  "blog.sources": "Sources",
+  "blog.ficheTitle": "L'essentiel",
+  "blog.notFound": "Article introuvable.",
+  "blog.vector.can": "Bus CAN",
+  "blog.vector.api": "API / telematique",
+  "blog.vector.hardware": "Materiel",
+  "blog.vector.rf": "Radio / Bluetooth",
+  "blog.vector.charge": "Recharge",
+  "article.cible": "Cible",
+  "article.entree": "Point d'entree",
+  "article.methode": "Methode",
+  "article.faille": "Faille",
 
   "decoder.title": "Decoder et modifier une trame",
   "decoder.lede": "Choisissez un signal, modifiez l'octet qui le porte, et observez ce que la voiture en fait.",

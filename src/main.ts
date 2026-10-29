@@ -13,6 +13,7 @@ import { createCanbusView } from "./ui/canbus";
 import { createToolsView } from "./ui/tools";
 import { createFrameView } from "./ui/frame";
 import { createReverseView } from "./ui/reverse";
+import { createBlogIndexView, createArticleView } from "./ui/blog";
 import { createUdsView } from "./ui/uds";
 import { createAtelierView } from "./ui/atelier";
 import { blockingMeasure } from "./sim/engine";
@@ -30,16 +31,28 @@ let ficheOpen = true;
 let trafficTimer: number | undefined;
 
 // ---- routing (hash based, GitHub Pages friendly) ----
-type Route = "home" | "canbus" | "decoder" | "reverse" | "uds" | "atelier" | "tools";
-function currentRoute(): Route {
-  const hash = location.hash.replace(/^#\/?/, "");
-  if (hash === "bus-can") return "canbus";
-  if (hash === "decodeur") return "decoder";
-  if (hash === "reverse") return "reverse";
-  if (hash === "uds") return "uds";
-  if (hash === "atelier") return "atelier";
-  if (hash === "outils") return "tools";
-  return "home";
+type Route = "home" | "canbus" | "decoder" | "reverse" | "blog" | "uds" | "atelier" | "tools";
+function hashParts(): { route: Route; slug: string } {
+  const raw = location.hash.replace(/^#\/?/, "");
+  const [seg0, seg1 = ""] = raw.split("/");
+  switch (seg0) {
+    case "bus-can":
+      return { route: "canbus", slug: "" };
+    case "decodeur":
+      return { route: "decoder", slug: "" };
+    case "reverse":
+      return { route: "reverse", slug: "" };
+    case "analyses":
+      return { route: "blog", slug: seg1 };
+    case "uds":
+      return { route: "uds", slug: "" };
+    case "atelier":
+      return { route: "atelier", slug: "" };
+    case "outils":
+      return { route: "tools", slug: "" };
+    default:
+      return { route: "home", slug: "" };
+  }
 }
 
 // ---- theme ----
@@ -98,7 +111,7 @@ function navLink(route: Route, target: string, key: string, active: Route): HTML
 
 function render(): void {
   if (trafficTimer) window.clearInterval(trafficTimer);
-  const route = currentRoute();
+  const { route, slug } = hashParts();
 
   // ---- topbar ----
   const themeBtn = h(
@@ -126,6 +139,7 @@ function render(): void {
 
   const nav = h("nav", { class: "nav", "aria-label": t("nav.label") }, [
     navLink("home", "#/", "nav.explore", route),
+    navLink("blog", "#/analyses", "nav.blog", route),
     navLink("canbus", "#/bus-can", "nav.canbus", route),
     navLink("decoder", "#/decodeur", "nav.decoder", route),
     navLink("reverse", "#/reverse", "nav.reverse", route),
@@ -160,6 +174,8 @@ function render(): void {
     main.append(createFrameView(), footer);
   } else if (route === "reverse") {
     main.append(createReverseView(), footer);
+  } else if (route === "blog") {
+    main.append(slug ? createArticleView(slug) : createBlogIndexView(), footer);
   } else if (route === "uds") {
     main.append(createUdsView(), footer);
   } else if (route === "atelier") {
@@ -281,17 +297,25 @@ if (import.meta.env.DEV) {
     console.warn("[catalog] identifiants a verifier:\n" + problems.join("\n"));
   }
   void (async () => {
-    const [{ getCanbus }, { getUds }, { getAtelier }, { validateReadingShape }] = await Promise.all([
+    const [{ getCanbus }, { getUds }, { getAtelier }, { getArticles }, { validateReadingShape }] = await Promise.all([
       import("./data/canbus"),
       import("./data/uds"),
       import("./data/atelier"),
+      import("./data/articles"),
       import("./data/reading"),
     ]);
     const checks: string[] = [];
+    const asPage = (title: string, sections: import("./data/reading").Section[]) => ({ title, lede: "", sections });
     for (const lang of ["de", "en"] as const) {
       checks.push(...validateReadingShape(getCanbus("fr"), getCanbus(lang), `canbus/${lang}`));
       checks.push(...validateReadingShape(getUds("fr"), getUds(lang), `uds/${lang}`));
       checks.push(...validateReadingShape(getAtelier("fr"), getAtelier(lang), `atelier/${lang}`));
+      const baseArt = getArticles("fr");
+      const otherArt = getArticles(lang);
+      for (const a of baseArt) {
+        const o = otherArt.find((x) => x.slug === a.slug);
+        if (o) checks.push(...validateReadingShape(asPage(a.slug, a.sections), asPage(o.slug, o.sections), `article:${a.slug}/${lang}`));
+      }
     }
     if (checks.length > 0) console.warn("[i18n] structure a verifier:\n" + checks.join("\n"));
   })();
