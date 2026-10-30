@@ -9,7 +9,7 @@ import { atelierEn } from "./content/atelier.en";
 const fr: ReadingPage = {
   title: "Monter son banc, et aller plus loin",
   lede:
-    "De quoi passer de la lecture a la pratique : un bus CAN virtuel, les commandes qui comptent, le vocabulaire, et ou continuer.",
+    "De quoi passer de la lecture à la pratique : un bus CAN virtuel, les commandes qui comptent, le vocabulaire, et où continuer.",
   sections: [
     {
       id: "banc",
@@ -17,11 +17,11 @@ const fr: ReadingPage = {
       blocks: [
         {
           t: "p",
-          text: "Pas besoin de vehicule pour commencer. Linux embarque SocketCAN ; une interface virtuelle vcan se comporte comme un vrai bus, et le simulateur ICSim fournit un tableau de bord a piloter.",
+          text: "Pas besoin de véhicule pour commencer. Linux embarque SocketCAN ; une interface virtuelle vcan se comporte comme un vrai bus, et le simulateur ICSim fournit un tableau de bord à piloter.",
         },
         {
           t: "code",
-          caption: "Creer un bus CAN virtuel (Linux, SocketCAN)",
+          caption: "Créer un bus CAN virtuel (Linux, SocketCAN)",
           lines: [
             "sudo modprobe vcan",
             "sudo ip link add dev vcan0 type vcan",
@@ -38,7 +38,7 @@ const fr: ReadingPage = {
         },
         {
           t: "note",
-          text: "Tout reste local et virtuel : aucun vehicule n'est touche, aucune trame ne sort de la machine.",
+          text: "Tout reste local et virtuel : aucun véhicule n'est touché, aucune trame ne sort de la machine.",
         },
       ],
     },
@@ -48,50 +48,50 @@ const fr: ReadingPage = {
       blocks: [
         {
           t: "p",
-          text: "Le virtuel suffit pour apprendre la methode ; le cuivre la rend concrete. Quatre montages, du plus simple a quinze euros au plus parlant en demonstration, tous documentes et reproductibles.",
+          text: "Le virtuel suffit pour apprendre la méthode ; le cuivre la rend concrète. Quatre montages, du plus simple à quinze euros au plus parlant en démonstration, tous documentés et reproductibles.",
         },
         {
           t: "table",
           caption: "Du banc jouet au tableau de bord qui s'allume",
-          head: ["Montage", "Materiel", "Ce qu'on reproduit"],
+          head: ["Montage", "Matériel", "Ce qu'on reproduit"],
           rows: [
             [
               "Banc deux noeuds",
-              "2 Arduino ou ESP32, 2 transceivers (MCP2515 ou TWAI natif), 2 resistances 120 ohms",
-              "Le coeur du reverse : un noeud emet, l'autre ecoute. Sniffer, diff, injection.",
+              "2 Arduino ou ESP32, 2 transceivers (MCP2515 ou TWAI natif), 2 résistances 120 ohms",
+              "Le coeur du reverse : un noeud émet, l'autre écoute. Sniffer, diff, injection.",
             ],
             [
               "Pont ESP32",
               "1 ESP32 avec ESP32RET ou CANMIM",
-              "Capture, rejeu et homme du milieu sur un vrai bus, pilotes depuis le PC (SavvyCAN).",
+              "Capture, rejeu et homme du milieu sur un vrai bus, pilotés depuis le PC (SavvyCAN).",
             ],
             [
               "Raspberry Pi + CAN-HAT",
               "1 Raspberry Pi, 1 chapeau CAN (PiCAN, Waveshare)",
-              "Les memes candump / cansend que l'Atelier, mais sur une interface can0 physique.",
+              "Les mêmes candump / cansend que l'Atelier, mais sur une interface can0 physique.",
             ],
             [
-              "Tableau de bord reel",
-              "Un combine d'instruments de casse, une alimentation, un bus termine",
-              "Les aiguilles bougent pour de vrai quand on forge les trames. La demonstration qui marque.",
+              "Tableau de bord réel",
+              "Un combiné d'instruments de casse, une alimentation, un bus terminé",
+              "Les aiguilles bougent pour de vrai quand on forge les trames. La démonstration qui marque.",
             ],
           ],
         },
         {
           t: "ul",
           items: [
-            "Cablage : CAN-H relie a CAN-H, CAN-L a CAN-L, et une resistance de 120 ohms a chaque extremite du bus.",
-            "Le piege classique : beaucoup de modules MCP2515 ont un quartz a 8 MHz, pas 16. Si l'horloge ne correspond pas, le bus reste muet.",
-            "Debit : la plupart des exemples tournent a 250 ou 500 kbit/s, et les deux noeuds doivent etre regles pareil.",
+            "Câblage : CAN-H relié à CAN-H, CAN-L à CAN-L, et une résistance de 120 ohms à chaque extrémité du bus.",
+            "Le piège classique : beaucoup de modules MCP2515 ont un quartz à 8 MHz, pas 16. Si l'horloge ne correspond pas, le bus reste muet.",
+            "Débit : la plupart des exemples tournent à 250 ou 500 kbit/s, et les deux noeuds doivent être réglés pareil.",
           ],
         },
         {
           t: "p",
-          text: "Le pont avec ce site : un Raspberry Pi muni d'un CAN-HAT expose une vraie interface SocketCAN. Toutes les commandes vues plus haut fonctionnent a l'identique, et ICSim tourne dessus sans rien changer.",
+          text: "Le pont avec ce site : un Raspberry Pi muni d'un CAN-HAT expose une vraie interface SocketCAN. Toutes les commandes vues plus haut fonctionnent à l'identique, et ICSim tourne dessus sans rien changer.",
         },
         {
           t: "code",
-          caption: "Passer ICSim du bus virtuel a une interface CAN reelle",
+          caption: "Passer ICSim du bus virtuel à une interface CAN réelle",
           lines: [
             "sudo ip link set can0 type can bitrate 500000",
             "sudo ip link set up can0",
@@ -103,9 +103,9 @@ const fr: ReadingPage = {
           t: "links",
           items: [
             {
-              label: "Banc deux noeuds pas a pas (SparkFun CAN Bus Shield)",
+              label: "Banc deux noeuds pas à pas (SparkFun CAN Bus Shield)",
               url: "https://www.instructables.com/Sparkfun-CAN-Bus-Shield-Tutorial",
-              note: "Deux Arduino, cablage et terminaison expliques.",
+              note: "Deux Arduino, câblage et terminaison expliqués.",
             },
             {
               label: "ESP32RET",
@@ -115,12 +115,12 @@ const fr: ReadingPage = {
             {
               label: "CANMIM",
               url: "https://github.com/zeroomega/canmim",
-              note: "Homme du milieu CAN sur ESP32 : lire, filtrer, injecter, reemettre.",
+              note: "Homme du milieu CAN sur ESP32 : lire, filtrer, injecter, réémettre.",
             },
             {
-              label: "Pro-CHASER (testbed de recherche)",
+              label: "Pro-CHASER (banc d'essai de recherche)",
               url: "https://researcher.manipal.edu/en/publications/pro-chaser-a-prototype-testbed-for-car-hacking-attack-simulation-/",
-              note: "Un banc Raspberry Pi + CAN-HAT decrit dans une publication.",
+              note: "Un banc Raspberry Pi + CAN-HAT décrit dans une publication.",
             },
           ],
         },
@@ -128,7 +128,7 @@ const fr: ReadingPage = {
     },
     {
       id: "antiseche",
-      heading: "Antiseche can-utils",
+      heading: "Antisèche can-utils",
       blocks: [
         {
           t: "table",
@@ -137,11 +137,11 @@ const fr: ReadingPage = {
           rows: [
             ["candump vcan0", "Afficher en direct toutes les trames du bus."],
             ["candump -l vcan0", "Enregistrer dans un fichier (candump-*.log) pour rejeu."],
-            ["canplayer -I fichier.log", "Rejouer un enregistrement a l'identique."],
-            ["cansend vcan0 123#DEADBEEF", "Envoyer une trame : identifiant 0x123, donnees DE AD BE EF."],
-            ["cangen vcan0 -I i -L 8 -D r", "Generer des trames aleatoires : charge et fuzzing."],
-            ["cansniffer vcan0", "Vue groupee par identifiant, octets changeants en surbrillance."],
-            ["cansend vcan0 000#0000000000000000", "Marteler l'identifiant 0 : illustration d'un deni de service."],
+            ["canplayer -I fichier.log", "Rejouer un enregistrement à l'identique."],
+            ["cansend vcan0 123#DEADBEEF", "Envoyer une trame : identifiant 0x123, données DE AD BE EF."],
+            ["cangen vcan0 -I i -L 8 -D r", "Générer des trames aléatoires : charge et fuzzing."],
+            ["cansniffer vcan0", "Vue groupée par identifiant, octets changeants en surbrillance."],
+            ["cansend vcan0 000#0000000000000000", "Marteler l'identifiant 0 : illustration d'un déni de service."],
           ],
         },
       ],
@@ -153,17 +153,17 @@ const fr: ReadingPage = {
         {
           t: "deflist",
           items: [
-            { term: "ECU / calculateur", def: "Un des ordinateurs du vehicule : moteur, freinage, habitacle, etc." },
-            { term: "Trame (frame)", def: "Unite de donnees transmise sur le bus : un identifiant et jusqu'a huit octets." },
-            { term: "Identifiant (CAN ID)", def: "Champ qui decrit le contenu d'une trame et fixe sa priorite d'arbitrage." },
+            { term: "ECU / calculateur", def: "Un des ordinateurs du véhicule : moteur, freinage, habitacle, etc." },
+            { term: "Trame (frame)", def: "Unité de données transmise sur le bus : un identifiant et jusqu'à huit octets." },
+            { term: "Identifiant (CAN ID)", def: "Champ qui décrit le contenu d'une trame et fixe sa priorité d'arbitrage." },
             { term: "ISO-TP", def: "Couche de transport (ISO 15765-2) qui segmente les messages de plus de huit octets." },
-            { term: "UDS", def: "Services de diagnostic normalises (ISO 14229), au-dessus du bus." },
-            { term: "DoIP", def: "Diagnostic sur IP (ISO 13400) : le diagnostic porte par Ethernet." },
-            { term: "SecOC", def: "Secure Onboard Communication : authentifie les messages (MAC et compteur de fraicheur)." },
-            { term: "DTC", def: "Diagnostic Trouble Code : un code defaut enregistre par un calculateur." },
-            { term: "PID (OBD)", def: "Parameter ID : identifiant d'une donnee standard lisible via la prise OBD-II." },
-            { term: "CAN-FD", def: "Evolution du CAN : debit superieur et jusqu'a 64 octets de donnees par trame." },
-            { term: "Bus-off", def: "Etat dans lequel un noeud se deconnecte de lui-meme apres trop d'erreurs." },
+            { term: "UDS", def: "Services de diagnostic normalisés (ISO 14229), au-dessus du bus." },
+            { term: "DoIP", def: "Diagnostic sur IP (ISO 13400) : le diagnostic porté par Ethernet." },
+            { term: "SecOC", def: "Secure Onboard Communication : authentifie les messages (MAC et compteur de fraîcheur)." },
+            { term: "DTC", def: "Diagnostic Trouble Code : un code défaut enregistré par un calculateur." },
+            { term: "PID (OBD)", def: "Parameter ID : identifiant d'une donnée standard lisible via la prise OBD-II." },
+            { term: "CAN-FD", def: "Évolution du CAN : débit supérieur et jusqu'à 64 octets de données par trame." },
+            { term: "Bus-off", def: "État dans lequel un noeud se déconnecte de lui-même après trop d'erreurs." },
           ],
         },
       ],
@@ -175,16 +175,16 @@ const fr: ReadingPage = {
         {
           t: "links",
           items: [
-            { label: "The Car Hacker's Handbook (OpenGarages)", url: "https://www.opengarages.org/handbook/", note: "La reference d'entree, libre et gratuite." },
+            { label: "The Car Hacker's Handbook (OpenGarages)", url: "https://www.opengarages.org/handbook/", note: "La référence d'entrée, libre et gratuite." },
             { label: "can-utils (depot SocketCAN)", url: "https://github.com/linux-can/can-utils", note: "Les outils en ligne de commande." },
             { label: "ICSim, simulateur de tableau de bord", url: "https://github.com/zombieCraig/ICSim", note: "Pour s'exercer au rejeu sans voiture." },
-            { label: "UNECE WP.29 (R155 / R156)", url: "https://unece.org/transport/vehicle-regulations-wp29", note: "Le cadre reglementaire cybersecurite du vehicule." },
-            { label: "ISO/SAE 21434", url: "https://www.iso.org/standard/70918.html", note: "L'ingenierie de la cybersecurite automobile." },
+            { label: "UNECE WP.29 (R155 / R156)", url: "https://unece.org/transport/vehicle-regulations-wp29", note: "Le cadre réglementaire cybersécurité du véhicule." },
+            { label: "ISO/SAE 21434", url: "https://www.iso.org/standard/70918.html", note: "L'ingénierie de la cybersécurité automobile." },
           ],
         },
         {
           t: "note",
-          text: "Les liens s'ouvrent dans un nouvel onglet. Ce site ne depose aucun traceur.",
+          text: "Les liens s'ouvrent dans un nouvel onglet. Ce site ne dépose aucun traceur.",
         },
       ],
     },

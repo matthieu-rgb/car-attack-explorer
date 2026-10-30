@@ -1,6 +1,6 @@
-// Page "Reverse engineering d'une trame" : deux ateliers (decortiquer / forger)
+// Page "Reverse engineering d'une trame" : deux ateliers (decortiquer / forger)
 // + la methode. Valeurs techniques (identifiants, octets, cadences) universelles
-// et partagees ; seul le texte est traduit (de/en en repli FR).
+// et partagees ; seul le texte est traduit (de/en en repli FR).
 
 import type { Lang } from "../i18n";
 import { reverseDe } from "./content/reverse.de";
@@ -80,35 +80,35 @@ export interface ReverseContent {
 }
 
 const fr: ReverseContent = {
-  title: "Decortiquer et forger une trame",
+  title: "Décortiquer et forger une trame",
   lede:
-    "Le vrai travail : partir d'un bus illisible, trouver l'octet qui pilote une fonction, puis fabriquer la trame qui la commande. Deux ateliers pour voir la methode a l'oeuvre.",
+    "Le vrai travail : partir d'un bus illisible, trouver l'octet qui pilote une fonction, puis fabriquer la trame qui la commande. Deux ateliers pour voir la méthode à l'oeuvre.",
 
-  s1Title: "Decortiquer : trouver le bon octet",
+  s1Title: "Décortiquer : trouver le bon octet",
   s1Intro: [
-    "Branche sur le bus, on voit des milliers de trames par seconde, toutes anonymes. Aucune ne dit « je suis la vitesse ». La methode est celle d'un detective : provoquer une action connue, et regarder ce qui change.",
-    "C'est tout l'interet de cansniffer : il regroupe les trames par identifiant et met en evidence les octets qui bougent. On fige l'etat au repos, on agit sur la voiture, on compare avant et apres.",
+    "Branché sur le bus, on voit des milliers de trames par seconde, toutes anonymes. Aucune ne dit \"je suis la vitesse\". La méthode est celle d'un détective : provoquer une action connue, et regarder ce qui change.",
+    "C'est tout l'intérêt de cansniffer : il regroupe les trames par identifiant et met en évidence les octets qui bougent. On fige l'état au repos, on agit sur la voiture, on compare avant et après.",
   ],
-  snifferTitle: "Reperez l'octet qui reagit",
-  snifferHint: "Declenchez une action et observez quelle trame change. Activez « isoler » pour masquer le trafic de fond.",
+  snifferTitle: "Repérez l'octet qui réagit",
+  snifferHint: "Déclenchez une action et observez quelle trame change. Activez \"isoler\" pour masquer le trafic de fond.",
   snifferDiffLabel: "Isoler le changement",
   snifferActionLabels: {
     turn: "Clignotant gauche",
-    unlock: "Deverrouiller les portes",
-    accel: "Accelerer",
+    unlock: "Déverrouiller les portes",
+    accel: "Accélérer",
   },
   snifferNotes: {
-    turn: "0x188 — octet 0 : 0x00 → 0x01. Le bit 0 commande le clignotant gauche.",
-    unlock: "0x19B — octet 2 : 0x0F → 0x00. Les quatre serrures s'ouvrent d'un coup.",
-    accel: "0x244 — octets 3-4 : 0x189C → 0x2EE0. La vitesse grimpe a 120 km/h.",
+    turn: "0x188 - octet 0 : 0x00 -> 0x01. Le bit 0 commande le clignotant gauche.",
+    unlock: "0x19B - octet 2 : 0x0F -> 0x00. Les quatre serrures s'ouvrent d'un coup.",
+    accel: "0x244 - octets 3-4 : 0x189C -> 0x2EE0. La vitesse grimpe à 120 km/h.",
   },
-  snifferIdle: "Au repos, tout defile. Declenchez une action pour voir quelle trame y repond.",
+  snifferIdle: "Au repos, tout défile. Déclenchez une action pour voir quelle trame y répond.",
   s1Steps: [
-    "Capturer le trafic au repos : candump -l vcan0 enregistre tout dans un fichier.",
-    "Provoquer une action unique et repetee : verrouiller, clignoter, accelerer.",
-    "Comparer avant / apres : l'identifiant et l'octet qui changent trahissent la fonction.",
-    "Reduire : filtrer cet identifiant, isoler l'octet, puis le bit ou la plage utile.",
-    "Deduire l'echelle : faire varier la grandeur reelle et noter la relation (facteur, offset, ordre des octets).",
+    "Capturer le trafic au repos : candump -l vcan0 enregistre tout dans un fichier.",
+    "Provoquer une action unique et répétée : verrouiller, clignoter, accélérer.",
+    "Comparer avant / après : l'identifiant et l'octet qui changent trahissent la fonction.",
+    "Réduire : filtrer cet identifiant, isoler l'octet, puis le bit ou la plage utile.",
+    "Déduire l'échelle : faire varier la grandeur réelle et noter la relation (facteur, offset, ordre des octets).",
   ],
   s1Cmd: {
     caption: "Capturer puis observer",
@@ -118,22 +118,22 @@ const fr: ReverseContent = {
     ],
   },
   s1Close:
-    "Une fois l'identifiant, l'octet et l'echelle connus, vous tenez le mapping — exactement ce que l'outil Decodeur manipule.",
-  ctaDecode: "Decoder un signal",
+    "Une fois l'identifiant, l'octet et l'échelle connus, vous tenez le mapping - exactement ce que l'outil Décodeur manipule.",
+  ctaDecode: "Décoder un signal",
 
-  s2Title: "Forger : fabriquer et injecter",
+  s2Title: "Forger : fabriquer et injecter",
   s2Intro: [
-    "Connaitre le mapping ne suffit pas : il faut ecrire la trame et l'envoyer. Forger, c'est construire un identifiant et des octets, puis les emettre sur le bus.",
-    "Le piege : le vrai calculateur n'a pas disparu. Il continue d'emettre la bonne valeur. Votre trame et la sienne se disputent le combine — celui qui emet le plus souvent gagne. Une seule trame ne fait qu'un clignotement.",
+    "Connaître le mapping ne suffit pas : il faut écrire la trame et l'envoyer. Forger, c'est construire un identifiant et des octets, puis les émettre sur le bus.",
+    "Le piège : le vrai calculateur n'a pas disparu. Il continue d'émettre la bonne valeur. Votre trame et la sienne se disputent le combiné - celui qui émet le plus souvent gagne. Une seule trame ne fait qu'un clignotement.",
   ],
-  injectTitle: "La course a l'injection",
-  injectHint: "Montez la cadence d'injection et regardez le compteur basculer. Activez SecOC pour voir la defense.",
+  injectTitle: "La course à l'injection",
+  injectHint: "Montez la cadence d'injection et regardez le compteur basculer. Activez SecOC pour voir la défense.",
   injectCadence: "Cadence d'injection",
-  injectReadout: "Le combine affiche",
+  injectReadout: "Le combiné affiche",
   injectSecoc: "SecOC",
-  injectSecocMsg: "Trame forgee rejetee : code d'authentification invalide.",
+  injectSecocMsg: "Trame forgée rejetée : code d'authentification invalide.",
   injectNote:
-    "A faible cadence, la vraie valeur reprend le dessus : il faut emettre plus vite que le calculateur. SecOC rejette les trames sans code valide, et l'usurpation tombe.",
+    "À faible cadence, la vraie valeur reprend le dessus : il faut émettre plus vite que le calculateur. SecOC rejette les trames sans code valide, et l'usurpation tombe.",
   s2Cmd: {
     caption: "Forger et rejouer",
     lines: [
@@ -143,12 +143,12 @@ const fr: ReverseContent = {
     ],
   },
   s2Steps: [
-    "Construire la trame : identifiant#donnees en hexa, avec cansend.",
-    "Emettre en boucle, plus vite que le calculateur legitime, pour gagner l'arbitrage.",
-    "Ou rejouer une capture : meme sans comprendre les octets, un rejeu suffit souvent.",
+    "Construire la trame : identifiant#données en hexa, avec cansend.",
+    "Émettre en boucle, plus vite que le calculateur légitime, pour gagner l'arbitrage.",
+    "Ou rejouer une capture : même sans comprendre les octets, un rejeu suffit souvent.",
   ],
   s2Def:
-    "C'est la que SecOC change tout : chaque trame porte un code d'authentification et un compteur de fraicheur. Une trame forgee ou rejouee n'a pas le bon code, le recepteur l'ignore. La segmentation par la passerelle empeche, elle, d'atteindre le domaine critique depuis une entree exposee.",
+    "C'est là que SecOC change tout : chaque trame porte un code d'authentification et un compteur de fraîcheur. Une trame forgée ou rejouée n'a pas le bon code, le récepteur l'ignore. La segmentation par la passerelle empêche, elle, d'atteindre le domaine critique depuis une entrée exposée.",
   ctaAttacks: "Voir les attaques",
 };
 
@@ -156,7 +156,7 @@ const overrides: Record<Exclude<Lang, "fr">, ReverseContent | null> = { de: reve
 
 export function getReverse(lang: Lang): ReverseContent {
   if (lang === "fr") return fr;
-  return overrides[lang] ?? fr;
+  return overrides[lang] ?? fr;
 }
 
 export { fr as reverseFr };
