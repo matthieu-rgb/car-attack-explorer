@@ -3,457 +3,328 @@ import type { Article } from "../articles";
 // English translation of the "Analyses" articles. Mirrors fr in articles.ts.
 export const articlesEn: Article[] = [
   {
-    slug: "karr-bluetooth",
-    date: "2026-08-09",
-    readMins: 5,
-    vector: "rf",
-    tags: ["Bluetooth", "Shared key", "Aftermarket alarm", "2026"],
-    title: "KARR: a single Bluetooth key for 2.2 million cars",
+    slug: "tesla-voltage-glitching",
+    date: "2023-08-05",
+    readMins: 11,
+    vector: "hardware",
+    tags: ["Fault injection", "Secure boot", "Root of trust", "AMD", "Jailbreak"],
+    title: "Tesla: glitching the chip to break the root of trust",
     dek:
-      "In 2026, researchers from UC San Diego show that a dealer-installed anti-theft alarm uses the same Bluetooth key on every device. With that key, you can unlock, silence the alarm, and block the engine.",
+      "In 2023, four TU Berlin researchers make a Tesla's AMD secure processor stumble by disturbing its power supply. The payoff: arbitrary code on the root of trust, extraction of an identity key, and a jailbreak that software cannot patch.",
     fiche: {
-      cible:
-        "Vehicles fitted with a dealer-installed KARR / SWDS alarm (Honda, Toyota, Mazda, Ford, Jeep...), around 2.2 million.",
-      entree: "The Bluetooth interface of the aftermarket alarm, not the car itself.",
+      cible: "Tesla with AMD Ryzen infotainment (the MCU board known as MCU-Z), on recent Model 3, Y, S and X.",
+      entree: "Physical access to the MCU board, specifically to the power rail of the AMD secure processor (ASP).",
       methode:
-        "Forging the radio commands thanks to a hard-coded authentication key, identical across every unit.",
-      faille: "A single cryptographic key shared across the whole fleet: knowing it once is enough for all of them.",
+        "Voltage glitching: a tiny voltage drop timed to the moment the ROM code verifies the firmware signature makes that check fail to run.",
+      faille: "A root of trust in masked ROM, with no protection against fault injection: nothing to fix in the field.",
     },
     sections: [
       {
-        id: "maillon",
-        heading: "The added link",
+        id: "contexte",
+        heading: "The root of trust of a Tesla",
         blocks: [
           {
             t: "p",
-            text: "The KARR alarm is not fitted by the manufacturer: it is an accessory installed at the dealership, often recognisable by a KARR or SWDS sticker on the driver's window. It is controlled over Bluetooth from an app. This is exactly the kind of add-on whose security nobody checks.",
+            text: "A recent Tesla's infotainment runs on an AMD Ryzen x86 processor. Its entire boot is locked down by a separate component, the AMD secure processor (ASP, also called PSP): at power-on it verifies the signature of every software stage before launching it. This chain is the system's root of trust. It guards three things: the activation of paid options, the key that proves the car's identity to Tesla's service network, and the encryption of user data.",
           },
-        ],
-      },
-      {
-        id: "entree",
-        heading: "How they got in",
-        blocks: [
           {
-            t: "ol",
-            items: [
-              "Reverse-engineering the alarm's Bluetooth protocol.",
-              "Discovering a hard-coded authentication key, the same on every device.",
-              "With that key, forging the commands accepted by the alarm.",
-              "Unlocking the doors, disabling the alarm, honking the horn, and blocking the engine while the vehicle is stationary.",
-            ],
+            t: "p",
+            text: "Break this link and you get everything at once. That is exactly what a team from TU Berlin did, presented at Black Hat USA 2023 and then at 37C3.",
           },
           {
             t: "note",
             text:
-              "Work by UC San Diego, presented at DEF CON on 9 August and at USENIX Security on 12 August 2026. A firmware fix was pushed on 20 July 2026 through the KARR app; the vendor states it is not aware of any real-world abuse.",
+              "Work by Christian Werling, Niclas Kuhnapfel, Hans Niklas Jacob and Oleg Drokin (TU Berlin). Hans Niklas Jacob also co-authored the earlier AMD glitch the attack builds on.",
           },
         ],
       },
-      {
-        id: "lecon",
-        heading: "What went wrong, the lesson",
-        blocks: [
-          {
-            t: "p",
-            text: "Hard-coding a single key into every unit turns a secret into a single point of failure: one extraction compromises the entire fleet. Each unit should have had its own key, paired to a single vehicle.",
-          },
-          {
-            t: "p",
-            text: "The moral is broader: your weak spot is not necessarily in the car. The aftermarket accessory, meant to protect, becomes the way in. The more connected objects we add around the vehicle, the more the attack surface spreads beyond the car.",
-          },
-        ],
-      },
-    ],
-    sources: [
-      { label: "Fox News: KARR Bluetooth flaw exposes 2.2M cars", url: "https://www.foxnews.com/tech/karr-bluetooth-flaw-exposes-2-2m-cars-theft-risk" },
-      { label: "Popular Science: 2 million cars at risk of Bluetooth hack", url: "https://www.popsci.com/technology/car-bluetooth-cybersecurity-hack/" },
-      { label: "Malwarebytes: millions of cars could be tracked and unlocked", url: "https://www.malwarebytes.com/blog/bugs/2026/07/millions-of-cars-could-be-tracked-and-unlocked-by-a-hidden-security-flaw" },
-    ],
-  },
-
-  {
-    slug: "subaru-starlink",
-    date: "2025-01-23",
-    readMins: 6,
-    vector: "api",
-    tags: ["Geolocation", "Admin portal", "Account takeover", "Privacy"],
-    title: "Subaru STARLINK: a year of trips inside an admin panel",
-    dek:
-      "In early 2025, Sam Curry and Shubham Shah get into Subaru's STARLINK administration panel. The prize: live location, a year of history, and control of vehicles across the United States, Canada and Japan.",
-    fiche: {
-      cible: "Connected Subaru vehicles (STARLINK) in the United States, Canada and Japan.",
-      entree: "An administration subdomain found by scanning, then a hijacked employee account.",
-      methode:
-        "Resetting an employee's password (email found on LinkedIn) by bypassing two security questions.",
-      faille: "An admin panel too exposed and poorly protected: one employee's access hands over control of everything.",
-    },
-    sections: [
-      {
-        id: "porte",
-        heading: "Finding the door",
-        blocks: [
-          {
-            t: "p",
-            text: "It all starts with a sweep of subdomains. The two researchers stumble on STARLINK's internal administration portal, the tool employees use to manage accounts and vehicles. It should never have been reachable so easily.",
-          },
-        ],
-      },
-      {
-        id: "entree",
-        heading: "How they got in",
-        blocks: [
-          {
-            t: "ol",
-            items: [
-              "Finding a Subaru employee's email address on LinkedIn.",
-              "Triggering a password reset on their account.",
-              "Bypassing the two required security questions.",
-              "Obtaining full administrator access to the portal.",
-              "Querying any vehicle by its VIN, which itself can be recovered from a licence plate through registration records.",
-            ],
-          },
-        ],
-      },
-      {
-        id: "ampleur",
-        heading: "The scale",
-        blocks: [
-          {
-            t: "p",
-            text: "The panel does more than display records. From the interface, they can act on vehicles and view sensitive data.",
-          },
-          {
-            t: "ul",
-            items: [
-              "Start, stop, lock and unlock any connected Subaru.",
-              "See its live position.",
-              "Pull a year of location history on their test vehicle.",
-            ],
-          },
-        ],
-      },
-      {
-        id: "lecon",
-        heading: "What went wrong, the lesson",
-        blocks: [
-          {
-            t: "p",
-            text: "Two problems stack up. First, an exposed administration surface and weak account recovery: reset by email plus bypassable questions. Then, and this is the more lasting one, data retention: a year of each driver's trips, accessible behind a simple password.",
-          },
-          {
-            t: "p",
-            text: "Subaru fixed it quickly. But the case is a reminder that the car can be well protected while the backstage, the portal and its database, is not.",
-          },
-        ],
-      },
-    ],
-    sources: [
-      { label: "Sam Curry: Hacking Subaru", url: "https://samcurry.net/hacking-subaru" },
-      { label: "Jalopnik: hackers crack Subaru's connected services", url: "https://jalopnik.com/hackers-crack-subarus-connected-services-to-access-loca-1851746393" },
-      { label: "Engadget: Subaru's poor security left vehicle data accessible", url: "https://www.engadget.com/cybersecurity/subarus-poor-security-left-troves-of-vehicle-data-easily-accessible-182514123.html" },
-    ],
-  },
-
-  {
-    slug: "pwn2own-automotive-2025",
-    date: "2025-01-24",
-    readMins: 5,
-    vector: "charge",
-    tags: ["Competition", "EV chargers", "Infotainment", "0-day"],
-    title: "Pwn2Own Automotive 2025: 49 flaws, and the chargers fall",
-    dek:
-      "In Tokyo in January 2025, teams chained 49 brand-new flaws for 886,250 dollars. The most prolific target: charging stations.",
-    fiche: {
-      cible:
-        "Charging stations (Tesla Wall Connector, Autel, ChargePoint...), embedded operating systems and car radios.",
-      entree: "The network and USB surfaces of consumer and semi-professional hardware.",
-      methode: "Exploitation chains (overflows, comparisons with no lower bound...) up to code execution.",
-      faille: "A broad and young ecosystem: plenty of exposed code, still lightly hardened.",
-    },
-    sections: [
-      {
-        id: "principe",
-        heading: "How Pwn2Own works",
-        blocks: [
-          {
-            t: "p",
-            text: "Pwn2Own is a contest run by the Zero Day Initiative. Teams arrive with brand-new flaws (0-days) that they demonstrate live on real hardware. They get paid, and in exchange the manufacturers get the bugs back to fix them. It is a yearly snapshot of the state of automotive security.",
-          },
-        ],
-      },
-      {
-        id: "tombe",
-        heading: "What fell",
-        blocks: [
-          {
-            t: "p",
-            text: "Charging stations were the richest target of the edition. The Tesla Wall Connector was the first piece of hardware to fall, through a numeric range comparison with no lower bound that lets you take control of it.",
-          },
-          {
-            t: "ul",
-            items: [
-              "More than 140,000 dollars for the Tesla Wall Connector flaws alone.",
-              "Many car radios and infotainment systems compromised.",
-              "Electric charging stands out as the most exposed surface.",
-            ],
-          },
-        ],
-      },
-      {
-        id: "gagnants",
-        heading: "Who won",
-        blocks: [
-          {
-            t: "p",
-            text: "Sina Kheirkhah, of the Summoning Team, is crowned Master of Pwn with 222,250 dollars. Synacktiv finishes second with 147,500 dollars. In total: 49 brand-new flaws and 886,250 dollars handed out. Notably, nobody tried to attack a complete Tesla that year, even though the organisers had planned to give away a car.",
-          },
-        ],
-      },
-      {
-        id: "lecon",
-        heading: "What it says about the sector, the lesson",
-        blocks: [
-          {
-            t: "p",
-            text: "The attack surface has shifted outside the car: chargers, apps, cloud. The charging infrastructure, young and deployed fast, is the new soft target. The trend is confirmed: a PCA report counted 345 new automotive vulnerabilities in the second quarter of 2026, 161 of them rated critical.",
-          },
-        ],
-      },
-    ],
-    sources: [
-      { label: "Zero Day Initiative: Pwn2Own Automotive 2025, final results", url: "https://www.thezdi.com/blog/2025/1/23/pwn2own-automotive-2025-day-three-and-final-results" },
-      { label: "BleepingComputer: 886,250 dollars for 49 0-days", url: "https://www.bleepingcomputer.com/news/security/hackers-get-886-250-for-49-zero-days-at-pwn2own-automotive-2025/" },
-      { label: "SecurityWeek: chargers, OS and infotainment", url: "https://www.securityweek.com/hackers-earn-886000-at-pwn2own-automotive-2025-for-charger-os-infotainment-exploits/" },
-    ],
-  },
-
-  {
-    slug: "kia-portail-plaque",
-    date: "2024-09-26",
-    readMins: 5,
-    vector: "api",
-    tags: ["Remote takeover", "API", "Dealer portal", "Licence plate"],
-    title: "Kia: taking control of a car with a licence plate",
-    dek:
-      "In 2024, Sam Curry's team remotely controls millions of Kia vehicles starting from nothing but a licence plate, through the dealers-only portal.",
-    fiche: {
-      cible: "Connected Kia vehicles built after 2013, with or without an active Kia Connect subscription.",
-      entree: "kiaconnect.kdealer.com, the dealers' web portal.",
-      methode:
-        "Creating a dealer account, generating a token, calling the internal APIs, adding yourself as owner.",
-      faille: "Broken server-side access control: a dealer account hands over control of any vehicle.",
-    },
-    sections: [
-      {
-        id: "plaque",
-        heading: "From a plate to an owner",
-        blocks: [
-          {
-            t: "p",
-            text: "The starting point is available to anyone: a licence plate. It leads to the VIN, then, server-side, to the owner's information. No physical access to the car is needed.",
-          },
-        ],
-      },
-      {
-        id: "entree",
-        heading: "How they got in",
-        blocks: [
-          {
-            t: "ol",
-            items: [
-              "Register an account on the dealer portal kiaconnect.kdealer.com, reusing the same sign-up request as customers.",
-              "Generate an access token valid for the dealers' internal APIs.",
-              "Retrieve the owner's data: name, phone, email, address.",
-              "Replace the owner's email with your own and add yourself as primary account holder.",
-              "Send commands to the vehicle.",
-            ],
-          },
-        ],
-      },
-      {
-        id: "capacites",
-        heading: "What they could do",
-        blocks: [
-          {
-            t: "ul",
-            items: [
-              "Lock and unlock, start and stop, honk the horn, locate the vehicle.",
-              "All in about thirty seconds.",
-              "With no notification to the owner that their car had been accessed or their rights changed.",
-            ],
-          },
-        ],
-      },
-      {
-        id: "lecon",
-        heading: "What went wrong, the lesson",
-        blocks: [
-          {
-            t: "p",
-            text: "The car was not hacked: the weak link is the web server. Poorly partitioned access control let a dealer account act on any customer's vehicles. It is the perfect illustration of the shift in the threat: today most attacks are carried out remotely, and a large share go through telematics, the cloud or APIs.",
-          },
-          {
-            t: "p",
-            text: "The flaws were fixed before publication, the demonstration tool was never released, and Kia states that no malicious exploitation took place.",
-          },
-        ],
-      },
-    ],
-    sources: [
-      { label: "Sam Curry: Hacking Kia", url: "https://samcurry.net/hacking-kia" },
-      { label: "SecurityWeek: millions of Kia cars vulnerable to remote hacking", url: "https://www.securityweek.com/millions-of-kia-cars-were-vulnerable-to-remote-hacking-researchers/" },
-      { label: "BleepingComputer: Kia dealer portal flaw", url: "https://www.bleepingcomputer.com/news/security/kia-dealer-portal-flaw-could-let-attackers-hack-millions-of-cars/" },
-    ],
-  },
-
-  {
-    slug: "tesla-voltage-glitching",
-    date: "2023-08-05",
-    readMins: 6,
-    vector: "hardware",
-    tags: ["Hardware", "Fault injection", "Root of trust", "Jailbreak"],
-    title: "Tesla: tripping the chip to break the root of trust",
-    dek:
-      "In 2023, researchers from TU Berlin disturb the power supply of a Tesla's AMD processor to bypass its secure boot. From there, they extract secrets and unlock paid options.",
-    fiche: {
-      cible: "Recent Tesla vehicles with an AMD Ryzen infotainment system.",
-      entree: "The MCU board: physical access to the power supply of the secure AMD processor.",
-      methode: "Voltage glitching: a micro power dip at the right moment makes a boot-time check fail to run.",
-      faille: "A secure boot that can be bypassed by fault injection, in a ROM that cannot be patched.",
-    },
-    sections: [
       {
         id: "glitch",
-        heading: "What is voltage glitching",
+        heading: "Voltage glitching, explained",
         blocks: [
           {
             t: "p",
-            text: "It is a fault-injection attack. By causing a very brief voltage drop, at the precise moment the processor runs a sensitive instruction (a signature check, for example), you make it trip: the instruction is skipped or mis-executed, and control passes when it should have failed.",
+            text: "A processor assumes a stable power supply. Drop it very briefly, for a few tens of nanoseconds, at the exact moment it executes a sensitive instruction, and it stumbles: the instruction is skipped or mis-executed. Applied right on the comparison that validates a signature, this fault turns a failure into a success. Unsigned code passes as if it were legitimate.",
+          },
+          {
+            t: "p",
+            text: "The whole difficulty is timing. You have to find the window of a few moments when the verification happens, trigger the drop at that instant, and retry until it lands. It takes a while to tune, but once the window is known, the attack is repeatable.",
+          },
+          {
+            t: "note",
+            text:
+              "The glitch is not persistent: it must be replayed at every boot to get past the check. What is then placed in the system, however, can be made permanent.",
           },
         ],
       },
       {
-        id: "entree",
-        heading: "How they got in",
+        id: "chaine",
+        heading: "The exploitation chain, step by step",
         blocks: [
           {
             t: "ol",
             items: [
-              "Physical access to the vehicle's MCU board.",
-              "Targeting the secure AMD processor, the system's root of trust.",
-              "Glitching the ROM bootloader's verification step.",
-              "Getting unsigned code to run.",
+              "Take apart the MCU board and locate the rail that powers the core of the AMD secure processor (driven by a programmable voltage regulator).",
+              "Fit a small glitch circuit on that rail, able to cause a very short voltage drop on command.",
+              "Reuse the already known and documented AMD glitch, which targets the signature check of the boot code in ROM.",
+              "Trigger the drop at the exact moment the ROM verifies the next stage, and repeat until the verification is bypassed.",
+              "Run unsigned code on the secure processor: the root of trust is now under control.",
+              "From there, decrypt the firmware, patch the Linux system for persistent root access, and extract the hardware-bound RSA key.",
+            ],
+          },
+          {
+            t: "frame",
+            caption: "The boot chain and the injection point (teaching schematic).",
+            lines: [
+              { text: "masked ROM (ASP)  --verifies signature-->  PSP bootloader", mark: "ok" },
+              { text: "         ^ glitch here: the check is skipped", mark: "hl" },
+              { text: "PSP bootloader  -->  ABL  -->  UEFI  -->  Linux kernel", mark: "ok" },
+              { text: "unsigned code accepted: root of trust compromised", mark: "hl" },
             ],
           },
         ],
       },
       {
         id: "butin",
-        heading: "What they obtain",
+        heading: "What the glitch unlocks",
         blocks: [
           {
-            t: "ul",
-            items: [
-              "Running their own software: an infotainment jailbreak.",
-              "Extracting the hardware-bound RSA key, the one that authenticates the car to Tesla's service network.",
-              "Enabling software-locked options: heated seats, acceleration boost.",
+            t: "table",
+            caption: "A single fault opens four doors.",
+            head: ["Capability gained", "What it means in practice"],
+            rows: [
+              ["Persistent jailbreak", "Root access on the infotainment Linux, surviving reboots and updates."],
+              ["Attestation key extraction", "The hardware-bound RSA key that authenticates the car to Tesla's network: enough to migrate, even clone, a vehicle's identity."],
+              ["Paid options", "Heated seats, acceleration boost, and depending on region other software-locked features, enabled without paying."],
+              ["User data", "Decryption of the personal data stored and encrypted by the system."],
             ],
           },
         ],
       },
       {
-        id: "lecon",
-        heading: "Why it is serious and hard to patch",
+        id: "outillage",
+        heading: "The tooling",
         blocks: [
           {
-            t: "p",
-            text: "The flaw is in the processor's ROM: it cannot be fixed without changing the chip. The glitch is not persistent, it has to be redone at every boot, and it requires physical access. So it is not a remote mass theft, but it is worse on one point: it breaks a trust anchor and makes it possible to clone a vehicle's identity.",
-          },
-          {
-            t: "note",
-            text:
-              "Work by researchers from TU Berlin (Christian Werling, Niclas Kuhnapfel, Hans Niklas Jacob...), presented in 2023. The team followed up in 2024 with a similar attack on the Autopilot computer.",
-          },
-        ],
-      },
-    ],
-    sources: [
-      { label: "Hackaday: jailbreaking Tesla infotainment systems", url: "https://hackaday.com/2023/08/05/jailbreaking-tesla-infotainment-systems/" },
-      { label: "Dark Reading: Tesla jailbreak unlocks paid features", url: "https://www.darkreading.com/application-security/tesla-jailbreak-unlocks-theft-in-car-paid-features" },
-      { label: "Hackster: unpatchable jailbreak for cloning Teslas", url: "https://www.hackster.io/news/researchers-find-an-unpatchable-jailbreak-for-cloning-teslas-unlocking-paywalled-features-51753e53439c" },
-    ],
-  },
-
-  {
-    slug: "vol-can-injection",
-    date: "2023-04-03",
-    readMins: 6,
-    vector: "can",
-    tags: ["Theft", "CAN bus", "Injection", "No authentication"],
-    title: "Car theft through the headlight: CAN injection",
-    dek:
-      "In 2023, Ian Tabor and Ken Tindell trace the theft of their RAV4 back to a headlight wire. Behind it, an attack that needs no key and no OBD port: talking directly to the CAN bus.",
-    fiche: {
-      cible: "Toyota RAV4, and dozens of models (Lexus, Jeep, Nissan, VW...) targeted by the same devices.",
-      entree: "The front headlight harness, reachable by forcing the bumper.",
-      methode:
-        "Injecting a CAN frame that poses as the validated key, relayed by the gateway to the engine controller.",
-      faille: "The CAN bus authenticates no message: a well-formed frame is taken at its word.",
-    },
-    sections: [
-      {
-        id: "depart",
-        heading: "The starting point: a torn-off headlight",
-        blocks: [
-          {
-            t: "p",
-            text: "Ian Tabor's RAV4 is vandalised, then stolen. Before the theft, the car logged fault codes indicating a loss of communication with the headlight controller and the CAN network. Together with Ken Tindell, CTO of Canis Automotive Labs, he traces the trail back to the front headlight harness.",
-          },
-        ],
-      },
-      {
-        id: "entree",
-        heading: "How they got in",
-        blocks: [
-          {
-            t: "p",
-            text: "The headlight shares the same CAN bus as the smart-key controller. Reaching the headlight connector means reaching the bus. From there, the scenario takes just a few moves.",
-          },
-          {
-            t: "ol",
+            t: "deflist",
             items: [
-              "Force the bumper or the headlight to expose the wires.",
-              "Clip an injector onto CAN-H and CAN-L.",
-              "Emit a forged frame announcing that the key has been validated.",
-              "The gateway relays the message to the engine network, which it takes at its word.",
-              "The engine starts: the car drives off in about a minute.",
+              { term: "Glitch circuit (about $100)", def: "A small board that causes the voltage drop on command. It is the heart of the attack, and costs almost nothing." },
+              { term: "Oscilloscope / logic analyzer", def: "To observe the boot and find the time window when the verification happens." },
+              { term: "Soldering iron and physical access", def: "You must open the MCU board and tap the right power rail." },
+              { term: "Prior art", def: "The AMD glitch from 'One Glitch to Rule Them All' (2021), then the team's 2024 follow-up, 'Three Glitches to Rule One Car', on the driver-assistance computer." },
             ],
           },
         ],
       },
       {
         id: "peche",
-        heading: "What went wrong",
+        heading: "What failed",
         blocks: [
           {
-            t: "p",
-            text: "The CAN bus has no message authentication: any node able to place bits on the wire is believed. A well-formed frame, even sent by an intruder, is treated as legitimate. This is the design flaw the whole approach exploits.",
-          },
-          {
-            t: "note",
-            text:
-              "The injector, hidden in a fake JBL speaker sold to thieves, held barely ten dollars of components. The RAV4 case is tracked under the reference CVE-2023-29389.",
+            t: "ul",
+            items: [
+              "The root of trust assumes the ROM always enforces its check. Fault injection breaks that assumption: you do not attack the cryptography, you stop the processor from verifying it.",
+              "The boot code lives in masked ROM, etched into the silicon: it cannot be fixed by an update.",
+              "The chip does not detect power anomalies (no glitch detector, no double check): a single fault is enough.",
+            ],
           },
         ],
       },
       {
-        id: "lecon",
-        heading: "The lesson, and the defence",
+        id: "portee",
+        heading: "Scope and limits",
         blocks: [
           {
             t: "p",
-            text: "This is exactly what SecOC targets: authenticating every message with a code and a freshness counter, so that a forged frame is rejected. Segmentation also helps, by preventing a node on the front network from reaching the engine controller. Two defences shown directly elsewhere on this site.",
+            text: "This is not a remote mass theft: it needs physical access, hardware, and tuning time per unit. But on one point it is worse than theft: the attack breaks a hardware trust anchor and lets you clone a vehicle's identity. And because the flaw is in the silicon, it cannot be fixed by software; the only real countermeasure is a chip resistant to fault injection. Since AMD supplies other manufacturers, the class of problem goes beyond Tesla.",
+          },
+          {
+            t: "note",
+            text:
+              "In 2024, the same team followed up with 'Three Glitches to Rule One Car', carrying the approach over to the driver-assistance computer.",
+          },
+        ],
+      },
+    ],
+    sources: [
+      { label: "Christian Werling (TU Berlin): research page and publications", url: "https://www.user.tu-berlin.de/cwerling/" },
+      { label: "Mayhem Security: Jailbreaking Teslas at Black Hat USA 2023", url: "https://www.mayhem.security/blog/jailbreaking-teslas-at-black-hat-usa-2023" },
+      { label: "Hackaday: jailbreaking Tesla infotainment systems", url: "https://hackaday.com/2023/08/05/jailbreaking-tesla-infotainment-systems/" },
+      { label: "One Glitch to Rule Them All: fault injection against AMD's ASP (arXiv)", url: "https://arxiv.org/abs/2108.04575" },
+    ],
+  },
+
+  {
+    slug: "vol-can-injection",
+    date: "2023-04-03",
+    readMins: 11,
+    vector: "can",
+    tags: ["CAN bus", "Frame injection", "Keyless theft", "Gateway", "SecOC"],
+    title: "Theft through the headlight: anatomy of a CAN injection",
+    dek:
+      "In 2023, Ian Tabor and Ken Tindell trace the theft of their RAV4 back to a headlight wire. Behind it, an attack that needs no key and no OBD port: forcing the CAN bus to believe a forged frame. We break down the mechanism, the tooling and the defenses.",
+    fiche: {
+      cible: "Toyota RAV4, and dozens of models (Lexus, Jeep, Nissan, VW, Maserati...) targeted by the same devices.",
+      entree: "The front headlight harness, a point on the control CAN bus reachable by forcing the bumper.",
+      methode:
+        "A device injects, in a loop, a frame that impersonates the smart key receiver, relayed unchecked by the gateway to the engine controller.",
+      faille: "CAN authenticates no message and the gateway relays between domains without verifying: a well-formed frame is taken at its word.",
+    },
+    sections: [
+      {
+        id: "contexte",
+        heading: "The theft that documented it all",
+        blocks: [
+          {
+            t: "p",
+            text: "Ian Tabor's RAV4 is first vandalized (bumper torn off, headlight connector unplugged), then stolen a few days later. Before the theft, the car logged fault codes reporting a loss of communication with the headlight controller and with the CAN network. With Ken Tindell, CTO of Canis Automotive Labs, Tabor traces the wire back to the front headlight harness, and uncovers a method that has become a small industry.",
+          },
+          {
+            t: "note",
+            text:
+              "The injector was sold ready to use to thieves, hidden in a fake Bluetooth speaker: about ten dollars of parts to steal a car in a minute.",
+          },
+        ],
+      },
+      {
+        id: "architecture",
+        heading: "The target: a chatty bus, zero authentication",
+        blocks: [
+          {
+            t: "p",
+            text: "A car has not one CAN bus but several, linked by a central gateway. On the control bus travel the messages of the smart key receiver. The front headlight is wired to that same bus: reaching its connector means reaching the bus that carries the authorization to start. The underlying problem: on a CAN, no message is signed, and the gateway copies certain frames from one bus to another without verifying them.",
+          },
+          {
+            t: "duo",
+            aTitle: "What the network assumes",
+            a: [
+              "Only factory controllers talk on the bus.",
+              "A well-formed frame necessarily comes from a legitimate node.",
+              "The gateway relays what is useful between domains.",
+            ],
+            bTitle: "What the attacker exploits",
+            b: [
+              "Any node placed on the wire can transmit.",
+              "Nothing tells a forged frame from a real one.",
+              "So the gateway relays the forged frame too.",
+            ],
+          },
+        ],
+      },
+      {
+        id: "injection",
+        heading: "CAN injection, the real trick",
+        blocks: [
+          {
+            t: "p",
+            text: "The subtle point: the real key controller keeps emitting its own legitimate message ('no key present'). So it is not enough to add a frame, you have to impose yours. CAN arbitrates bit by bit: a dominant bit (0) overwrites a recessive bit (1), and the lowest identifier wins. The device exploits this mechanism and adds a circuit that forces the transceiver's behavior, so as to place its bits and push the legitimate node into error. The result: it is the forged frame that the gateway and the engine see.",
+          },
+          {
+            t: "note",
+            text:
+              "This is what sets CAN injection apart from a simple replay: the attacker wins arbitration and neutralizes the authentic source, instead of adding noise on top.",
+          },
+        ],
+      },
+      {
+        id: "chaine",
+        heading: "The exploitation chain, step by step",
+        blocks: [
+          {
+            t: "ol",
+            items: [
+              "Force the bumper or the headlight to expose the harness wires.",
+              "Tap the two bus wires, CAN-H and CAN-L.",
+              "Wait for a wake-up frame from the network, a sign the bus is listening.",
+              "Emit a burst (about twenty times per second) impersonating the key receiver: the 'key validated' message.",
+              "The immobilizer, believing the key is present, disarms.",
+              "The gateway relays the frame to the engine network, without verifying it.",
+              "A second message tells the body controller to unlock the doors.",
+              "The thief gets in and starts: the car drives off in about a minute, without the key.",
+            ],
+          },
+          {
+            t: "frame",
+            caption: "Teaching illustration: the forged burst (hl) amid normal traffic. Fictional identifiers.",
+            lines: [
+              { text: "0x120  engine        820 rpm                   normal frame", mark: "ok" },
+              { text: "0x043  key receiver  'no key present'          normal frame", mark: "ok" },
+              { text: "0x043  INJECTED      'key validated'  x20 / s   forged burst", mark: "hl" },
+              { text: "gateway  relays 0x043 to the engine network, unchecked", mark: "hl" },
+              { text: "immobilizer disabled, engine allowed to start", mark: "ok" },
+            ],
+          },
+        ],
+      },
+      {
+        id: "banc",
+        heading: "How to observe and replay it on a bench",
+        blocks: [
+          {
+            t: "p",
+            text: "You do not need a real car to understand the method. On a virtual bus or a two-controller bench, the approach is always the same: trigger an action, watch the frame that changes, then replay it. That is exactly what this site's Workshop offers. The commands below work on a test interface (vcan0), never on a vehicle.",
+          },
+          {
+            t: "code",
+            caption: "Observe, isolate, replay (on a test bench).",
+            lines: [
+              "# listen to all traffic on the test bus",
+              "candump vcan0",
+              "",
+              "# find the frame that moves when you act (diff before / after)",
+              "cansniffer vcan0",
+              "",
+              "# replay a spotted frame (identifier#data, example values)",
+              "cansend vcan0 043#01",
+            ],
+          },
+        ],
+      },
+      {
+        id: "outillage",
+        heading: "The tooling, on both sides",
+        blocks: [
+          {
+            t: "table",
+            caption: "The thief's device costs about ten dollars; the analysis uses public tools.",
+            head: ["Item", "Side", "What it does"],
+            rows: [
+              ["PIC18F microcontroller with CAN", "Thief", "Generates and paces the forged frames; locked firmware."],
+              ["CAN transceiver + override circuit", "Thief", "Places bits on the wire and forces arbitration against the legitimate node."],
+              ["Fake Bluetooth speaker", "Thief", "Case and battery: hides the injector and powers it."],
+              ["CAN interface (CANable, CANtact...)", "Analyst", "Connect a PC to the bus to read and send."],
+              ["can-utils (candump, cansniffer, cansend)", "Analyst", "Capture, filter and replay frames."],
+              ["SavvyCAN", "Analyst", "Visualize and compare captures, find the useful signal."],
+            ],
+          },
+        ],
+      },
+      {
+        id: "peche",
+        heading: "What failed",
+        blocks: [
+          {
+            t: "ul",
+            items: [
+              "CAN authenticates no message: a node able to place bits is taken at its word.",
+              "The gateway copies frames between domains without verifying their origin.",
+              "The immobilizer bases a security decision on a mere assertion from the bus.",
+              "A non-critical peripheral (the headlight) gives access to a critical bus.",
+            ],
+          },
+        ],
+      },
+      {
+        id: "parade",
+        heading: "The defense, and where to test it here",
+        blocks: [
+          {
+            t: "p",
+            text: "The fundamental answer is message authentication. That is the purpose of SecOC: each frame carries an authentication code and a freshness counter, so that a forged or replayed frame is rejected. Canis Labs pushes the same idea with CryptoCAN. Segmentation helps as well, by preventing a node on the front network from talking directly to the engine controller. Finally, intrusion detection can spot the bus errors characteristic of injection.",
+          },
+          {
+            t: "p",
+            text: "These two defenses, SecOC and segmentation, are switches you can turn on in the Explorer to watch the attack path get blocked. And the trigger, observe, replay method can be handled in the Workshop, on a virtual bus.",
           },
         ],
       },
@@ -462,6 +333,7 @@ export const articlesEn: Article[] = [
       { label: "Ken Tindell: CAN Injection, keyless car theft", url: "https://kentindell.github.io/2023/04/03/can-injection/" },
       { label: "SecurityWeek: thieves use CAN injection hack to steal cars", url: "https://www.securityweek.com/thieves-use-can-injection-hack-to-steal-cars/" },
       { label: "The Drive: stealing cars via headlight wiring", url: "https://www.thedrive.com/news/shadetree-hackers-are-stealing-cars-by-injecting-code-into-headlight-wiring" },
+      { label: "NVD: CVE-2023-29389", url: "https://nvd.nist.gov/vuln/detail/CVE-2023-29389" },
     ],
   },
 ];
