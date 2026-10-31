@@ -1266,6 +1266,47 @@ figure.code figcaption {
   border-top: none;
 }
 
+/* ---------- Schemas vectoriels (blocs svg des analyses) ---------- */
+figure.diagram {
+  margin: 10px 0 22px;
+  max-width: 46rem;
+}
+figure.diagram figcaption {
+  font-family: var(--f-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 8px;
+}
+.diagram-holder {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  padding: 20px 18px;
+  overflow-x: auto;
+}
+figure.diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  font-family: var(--f-sans);
+}
+figure.diagram svg text {
+  fill: var(--ink);
+}
+figure.diagram svg .dg-mono {
+  font-family: var(--f-mono);
+}
+figure.diagram svg .dg-faint {
+  fill: var(--ink-faint);
+}
+figure.diagram svg .dg-soft {
+  fill: var(--ink-soft);
+}
+
 figure.code {
   margin: 4px 0 16px;
   max-width: 42rem;

@@ -11,6 +11,7 @@ export type Block =
   | { t: "table"; caption?: string; head: string[]; rows: string[][] }
   | { t: "code"; caption?: string; lines: string[] }
   | { t: "deflist"; items: { term: string; def: string }[] }
+  | { t: "svg"; caption?: string; src: string }
   | { t: "links"; items: { label: string; url: string; note?: string }[] };
 
 export interface Section {

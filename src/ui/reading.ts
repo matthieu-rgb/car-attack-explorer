@@ -48,6 +48,14 @@ export function renderBlock(b: Block): HTMLElement {
       if (b.caption) return h("figure", { class: "code" }, [h("figcaption", {}, [b.caption]), pre]);
       return h("figure", { class: "code" }, [pre]);
     }
+    case "svg": {
+      // Schema vectoriel : le SVG est du contenu de confiance (ecrit ici),
+      // injecte tel quel ; il s'adapte au theme via les variables CSS.
+      const holder = h("div", { class: "diagram-holder" });
+      holder.innerHTML = b.src;
+      const kids = b.caption ? [h("figcaption", {}, [b.caption]), holder] : [holder];
+      return h("figure", { class: "diagram" }, kids);
+    }
     case "deflist":
       return h("dl", { class: "deflist" }, b.items.flatMap((it) => [
         h("dt", {}, [it.term]),
